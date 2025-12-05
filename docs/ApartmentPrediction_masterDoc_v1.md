@@ -232,28 +232,26 @@ Chef .. Kitchen : Link(Dashed)
 - Step-by-step: [Spring Boot: H2 DB and Thymeleaf – albertprofe wiki](https://albertprofe.dev/springboot/boot-what-create-th-h2.html)
 
 - DDL: [Spring Boot: H2 DB and Thymeleaf – albertprofe wiki](https://albertprofe.dev/springboot/boot-what-create-th-h2.html)
-
-Config `applcations properties` :
-
-```properties
-spring.application.name=ApartmentPredictor
-#spring.datasource.url=jdbc:h2:tcp://localhost/~/MyProjects/Sandbox/ApartmentPredictorProject/db/rapartmentpredictordb
-spring.datasource.url=jdbc:h2:/home/albert/MyProjects/Sandbox/ApartmentPredictorProject/db/apartmentpredictordb
-#spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=albert
-#spring.datasource.username=sa
-spring.datasource.password=1234
-#spring.datasource.password=
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.jpa.show-sql=true
-#spring.jpa.hibernate.ddl-auto=create
-spring.jpa.hibernate.ddl-auto=update
-```
-
-This [application.properties](cci:7://file:///home/albert/MyProjects/Sandbox/rentingCarTest/rentingCar-boot/src/main/resources/application.properties:0:0-0:0) file configures a Spring Boot application for apartment price predictor management with H2 database integration.
-
-Application Identity:
+  Config `applcations properties` 
+  
+  ```properties
+  spring.application.name=ApartmentPredictor
+  #spring.datasource.url=jdbc:h2:tcp://localhost/~/MyProjects/Sandbox/ApartmentPredictorProject/db/rapartmentpredictordb
+  spring.datasource.url=jdbc:h2:/home/albert/MyProjects/Sandbox/ApartmentPredictorProject/db/apartmentpredictordb
+  #spring.datasource.url=jdbc:h2:mem:testdb
+  spring.datasource.driverClassName=org.h2.Driver
+  spring.datasource.username=albert
+  #spring.datasource.username=sa
+  spring.datasource.password=1234
+  #spring.datasource.password=
+  spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+  spring.jpa.show-sql=true
+  #spring.jpa.hibernate.ddl-auto=create
+  spring.jpa.hibernate.ddl-auto=update
+  ```
+  
+  This [application.properties](cci:7://file:///home/albert/MyProjects/Sandbox/rentingCarTest/rentingCar-boot/src/main/resources/application.properties:0:0-0:0) file configures a Spring Boot application for aparment price predictor management with H2 database integration.
+  Application Identity
 
 - **`spring.application.name=ApartmentPredictor`** - Sets the application name used for identification in logs, monitoring tools, and service discovery. This appears in Spring Boot banners and helps distinguish this app from others.
   Database Configuration
