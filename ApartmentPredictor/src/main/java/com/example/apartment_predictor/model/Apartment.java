@@ -25,7 +25,10 @@ public class Apartment {
     private String prefarea;
     private String furnishingstatus;
 
-    @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(
+            mappedBy = "apartment",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
     private List<Review> reviews = new ArrayList<>();
 
     // Default constructor
@@ -54,6 +57,17 @@ public class Apartment {
         this.furnishingstatus = furnishingstatus;
     }
 
+    // helpers
+
+    public void addReview(Review review) {
+        reviews.add(review);
+        review.setApartment(this);
+    }
+
+    public void removeReview(Review review) {
+        reviews.remove(review);
+        review.setApartment(null);
+    }
 
 
     // Getters and Setters

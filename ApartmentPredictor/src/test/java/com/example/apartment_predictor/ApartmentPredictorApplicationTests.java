@@ -4,11 +4,15 @@ import com.example.apartment_predictor.model.Apartment;
 import com.example.apartment_predictor.model.Review;
 import com.example.apartment_predictor.repository.ApartmentRepository;
 import com.example.apartment_predictor.repository.ReviewRepository;
+import com.example.apartment_predictor.utils.PrintingUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+
 
 @SpringBootTest
 class ApartmentPredictorApplicationTests {
@@ -17,6 +21,8 @@ class ApartmentPredictorApplicationTests {
     ReviewRepository reviewRepository;
     @Autowired
     ApartmentRepository apartmentRepository;
+    @Autowired
+    PrintingUtils printingUtils;
 
     @Test
     void testApartmentsInsert() {
@@ -28,14 +34,31 @@ class ApartmentPredictorApplicationTests {
         apartmentRepository.save(apartment1);
         System.out.println("Apartment saved: " + apartment1);
 
-        // Display all apartments in the database
+       /* // Display all apartments in the database
         int index = 0;
         System.out.println("\n=== Apartments in the Database ===");
         for (Apartment apartment : apartmentRepository.findAll()) {
             index++;
             System.out.println("#" + index);
             System.out.println(apartment);
-        }
+        }*/
+
+        // Test all PrintingUtils methods
+        // Generic List
+        PrintingUtils.printList(List.copyOf((Collection<Apartment>) apartmentRepository.findAll()));
+        PrintingUtils.printList(List.copyOf((Collection<Apartment>) apartmentRepository.findAll()), "Using printList with title");
+        // Sending data by parameter, using CrudRepository
+        PrintingUtils.printApartments(apartmentRepository);
+        PrintingUtils.printApartmentsList(apartmentRepository.findAll());
+        // Sending data by parameter, using Iterable and generic
+        PrintingUtils.printObjectsList(apartmentRepository.findAll());
+        // Calling it as an instance method, using Iterable and generic
+        printingUtils.printApartmentsByRepoInstance();
+
+        //PrintingUtils.printApartmentsByRepo();
+        //PrintingUtils utils = new PrintingUtils();
+        // Trying to call it as an instance method
+        //utils.printApartmentsByRepoInstance();
 
         Review review1 = new Review();
         review1.setContent("This apartment exceeded my expectations. The location is perfect and the amenities are top-notch. Highly recommended for anyone looking for a comfortable stay.");
@@ -50,17 +73,14 @@ class ApartmentPredictorApplicationTests {
 
         apartmentRepository.save(apartment1);
 
-        // Display all apartments in the database
+        /*// Display all apartments in the database
         index = 0;
         System.out.println("\n=== Apartments in the Database ===");
         for (Apartment apartment : apartmentRepository.findAll()) {
             index++;
             System.out.println("#" + index);
             System.out.println(apartment);
-        }
-
-
-
+        }*/
     }
 
     @Test
