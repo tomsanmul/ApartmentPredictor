@@ -393,6 +393,7 @@ public class ApartmentPredictorApplication implements CommandLineRunner {
 ### Tests JUnit
 
 - [Java SE: JUnit and TDD – albertprofe wiki](https://albertprofe.dev/javase/se-concepts-tdd.html)
+- [SpringBoot Scope Management](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/SpringBoot_Scope_Management.md)
 
 ## Annotations
 
