@@ -10,7 +10,7 @@ import java.util.UUID;
 public class Apartment {
 
     @Id
-    private String id;
+    protected String id;
     private Long price;
     private Integer area;
     private Integer bedrooms;
@@ -179,7 +179,7 @@ public class Apartment {
         return id;
     }
 
-    /*public void setId(String id) {
+   /* public void setId(String id) {
         this.id = id;
     }*/
 
