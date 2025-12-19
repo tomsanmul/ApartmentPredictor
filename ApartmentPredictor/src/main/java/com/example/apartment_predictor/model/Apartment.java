@@ -12,8 +12,8 @@ public class Apartment {
     @Id
     protected String id;
     private Long price;
-    private Integer area;
-    private Integer bedrooms;
+    protected Integer area;
+    protected Integer bedrooms;
     private Integer bathrooms;
     private Integer stories;
     private String mainroad;
@@ -55,6 +55,12 @@ public class Apartment {
         this.parking = parking;
         this.prefarea = prefarea;
         this.furnishingstatus = furnishingstatus;
+    }
+
+
+    public double calculatePrice() {
+        double basePrice = area * 120 + (bedrooms * 8000);
+        return basePrice * (1 + (area * 0.04));
     }
 
     // helpers

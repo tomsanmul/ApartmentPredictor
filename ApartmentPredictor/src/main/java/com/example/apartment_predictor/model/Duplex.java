@@ -5,19 +5,30 @@ import java.util.UUID;
 public class Duplex extends Apartment {
 
     private String balcony;
-    private String elevator;
+    private boolean elevator;
 
 
     public Duplex() {
         this.id = UUID.randomUUID().toString();
     }
 
-    public Duplex(String balcony, String elevator, String airconditioning, String garden, int garageQty, String roofType) {
+    public Duplex(String balcony, boolean elevator, String airconditioning, String garden, int garageQty, String roofType) {
         this.id = UUID.randomUUID().toString();
         this.balcony = balcony;
         this.elevator = elevator;
 
     }
+
+    @Override
+    public double calculatePrice() {
+        double basePrice = area * 120 + (bedrooms * 8000);
+        if (elevator) {
+            basePrice *= 1.15;
+        }
+        return basePrice * (1 + (area * 0.04));
+    }
+
+
 
     public String getBalcony() {
         return balcony;
@@ -27,11 +38,11 @@ public class Duplex extends Apartment {
         this.balcony = balcony;
     }
 
-    public String getElevator() {
+    public boolean hasElevator() {
         return elevator;
     }
 
-    public void setElevator(String elevator) {
+    public void setElevator(boolean elevator) {
         this.elevator = elevator;
     }
 

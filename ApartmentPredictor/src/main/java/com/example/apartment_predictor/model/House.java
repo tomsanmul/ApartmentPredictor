@@ -19,6 +19,15 @@ public class House extends Apartment {
         this.garden = garden;
     }
 
+    @Override
+    public double calculatePrice() {
+        double basePrice = area * 120 + (bedrooms * 8000);
+        if (garageQty > 0) {
+            basePrice += 25000;
+        }
+        return basePrice * (1 + (area * 0.04));
+    }
+
     public int getGarageQty() {
         return garageQty;
     }
