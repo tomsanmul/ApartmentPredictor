@@ -22,7 +22,10 @@ public class ApartmentService {
         return apartmentRepository.save(apartment);
     }
 
-    public void updateApartment (){}
+    public Apartment updateApartment (Apartment apartment){
+
+       return apartmentRepository.save(apartment);
+    }
 
     public void deleteApartment (String id){
         apartmentRepository.deleteById(id);
