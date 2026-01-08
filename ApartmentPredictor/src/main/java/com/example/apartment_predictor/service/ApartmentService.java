@@ -14,27 +14,24 @@ public class ApartmentService {
     @Autowired
     ApartmentRepository apartmentRepository;
 
-    // implement CRUD operations: read
     public Iterable<Apartment> findAll() {
-
-
-
         return apartmentRepository.findAll();
     }
 
-
-    public void createApartment(){}
+    public Apartment createApartment(Apartment apartment){
+        return apartmentRepository.save(apartment);
+    }
 
     public void updateApartment (){}
 
-    public void deleteApartment (){}
+    public void deleteApartment (String id){
+        apartmentRepository.deleteById(id);
+    }
 
     public Apartment findApartmentById (String id){
-
         Optional<Apartment> found = apartmentRepository.findById(id);
         if ( found.isPresent()) return found.get() ;
         else return null;
-
 
     }
 
