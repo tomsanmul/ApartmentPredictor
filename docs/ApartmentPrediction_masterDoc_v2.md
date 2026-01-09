@@ -13,7 +13,6 @@
 Historical notes:
 
 - [Spring Framework – albertprofe wiki](https://albertprofe.dev/spring/spring-basics.html)
-
 - [JPA Before Annotatons one-to-many xml](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA_Before_Annotatons:_one-to-many-xml.md)
 
 #### Api Rest references
@@ -21,16 +20,16 @@ Historical notes:
 - What is api rest:
   
   - [Network: API Rest – albertprofe wiki](https://albertprofe.dev/devops/devops-network-rest.html)
-  
   - [What is a REST API?](https://www.redhat.com/en/topics/api/what-is-a-rest-api) /  [What is a REST Api, GoogleCloud](https://cloud.google.com/discover/what-is-rest-api)
 
 - API REST test tools:
   
   - [postman](https://www.postman.com/) / [Postman docs](https://learning.postman.com/docs/sending-requests/requests/)
-  
   - [Swagger](https://swagger.io/) / [OpenApi](https://springdoc.org/)
 
 - [restaurantManager controller](https://github.com/AlbertProfe/restaurantManager/blob/master/src/main/java/dev/example/restaurantManager/controller/BookingController.java)
+
+- [Booking Controller](https://github.com/AlbertProfe/restaurantManager/blob/master/src/main/java/dev/example/restaurantManager/controller/BookingController.java) / [LibraryRestController](https://github.com/AlbertProfe/viladoms2022books/blob/master/libraryRest/src/main/java/com/example/myfirstprojectspring/LibraryRestController.java)
 
 ### Product Goal
 
@@ -134,6 +133,8 @@ public class Apartment {
     private Integer parking;
     private String prefarea;
     private String furnishingstatus;
+    // @OneToMany
+    private List reviews;
 }
 ```
 
@@ -160,7 +161,8 @@ public class Review {
     private String content;
     private int rating;
     private LocalDate reviewDate;
-}s it temporarily).
+    // @ManyToOne
+    private Apartment aparment;
 ```
 
 ## UML V2.0 ApartmentPredictor
@@ -352,6 +354,121 @@ Calls that will work
 ### Postman documentation API REST
 
 - [apartmentPredictorCRUD](https://documenter.getpostman.com/view/7473960/2sBXVeFs8L)
+
+#### ResponseBody
+
+- [Lab#SB08-3: H2 and API Rest – albertprofe wiki](https://albertprofe.dev/springboot/sblab8-3.html#responseentity)
+
+`ResponseEntity` is Spring’s **full HTTP response wrapper (container)**. Returning `Iterable<Apartment>` only sends the JSON body, but returning `ResponseEntity<Iterable<Apartment>>` lets you control **everything** about the HTTP response: status code, headers, and body.
+
+Why it’s relevant
+
+- **Status control**: You can return `200 OK`, `201 CREATED`, `204 NO_CONTENT`, `404 NOT_FOUND`, etc., depending on business logic. This makes your API *semantic* (clients can react properly).
+- **Headers**: You can attach metadata like versioning, caching (`Cache-Control`), pagination info, custom flags, or diagnostics (like your `"Status"` header). Clients and gateways can use headers without parsing the body.
+- **Cleaner error handling**: You can return a different body for errors (e.g., an error DTO) with the correct status, instead of always `200`.
+
+How it works
+
+`ResponseEntity` is a container with:
+
+- **HTTP status** (default is 200 if you use `ok()`)
+- **HTTP headers**
+- **Body** (your `Iterable<Apartment>`)
+
+Spring MVC uses this to build the actual HTTP response. It then uses Jackson to serialize the body to JSON, and writes headers/status to the network response.  
+
+#### Nested Objects
+
+> From previous version we had the 1:n Apartment <> Review OneToMany configured with JPA.
+
+```java
+@Entity
+public class Apartment {
+
+    @Id
+    protected String id;
+    private Long price;
+    protected Integer area;
+    protected Integer bedrooms;
+    private Integer bathrooms;
+    private Integer stories;
+    private String mainroad;
+    private String guestroom;
+    private String basement;
+    private String hotwaterheating;
+    private String airconditioning;
+    private Integer parking;
+    private String prefarea;
+    private String furnishingstatus;
+
+    @OneToMany(
+            mappedBy = "apartment",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
+    private List<Review> reviews = new ArrayList<>();
+}
+
+@Entity
+public class Review {
+
+    @Id
+    private String id;
+    private String title;
+    private String content;
+    private int rating;
+    private LocalDate reviewDate;
+    @JsonIgnore
+    @JoinColumn(name = "apartment_fk")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Apartment apartment;
+}
+```
+
+`@JsonIgnore` is there to prevent **infinite recursion (circular reference)** and/or overly large JSON when you serialize your JPA entities to JSON (typically in REST responses).
+
+**What causes the problem in `Apartment` ↔ `Review`**
+
+In a bidirectional relationship you usually have:
+
+- `Apartment` has `List<Review> reviews` (`@OneToMany(mappedBy="apartment")`)
+- `Review` has `Apartment apartment` (`@ManyToOne`)
+
+When Jackson (the JSON serializer Spring Boot uses) tries to serialize an `Apartment`, it will include:
+
+1. the apartment fields
+2. the `reviews` list
+3. for each `Review`, it serializes its fields, including `review.apartment`
+4. that `apartment` again contains `reviews`
+5. repeat forever → **StackOverflowError** / “Infinite recursion” exception
+
+Putting `@JsonIgnore` on `Review.apartment` breaks that loop by saying:
+
+- **Serialize `Review`, but do not include its `apartment` property in JSON.**
+
+So you can safely return an `Apartment` with its reviews, and each review won’t contain the whole apartment again.
+
+Why it’s on the `ManyToOne` side in your case
+
+Common API shape:
+
+- `GET /apartments/{id}` returns the apartment and its `reviews`
+- Each review doesn’t need to embed the full apartment again
+
+So ignoring `Review.apartment` is usually the simplest choice.
+
+> Important: it’s not a JPA requirement : `@JsonIgnore` is **only for JSON serialization**, not for the database relationship. JPA doesn’t need it.
+
+##### Alternatives (often better than `@JsonIgnore`)
+
+If you want *some* apartment info inside a review (or you want both directions sometimes), consider:
+
+- **`@JsonManagedReference` / `@JsonBackReference`** (classic parent/child handling)
+- **`@JsonIdentityInfo`** (serialize objects by id to avoid loops)
+- **DTOs** (best practice for non-trivial APIs: return `ReviewDto`, `ApartmentDto` instead of entities)
+
+#### Cascade
+
+Unrelated to `@JsonIgnore`, but worth flagging: `@JoinColumn` should typically go with `@ManyToOne`, but **`@ManyToOne` generally should not use `cascade = CascadeType.ALL`** (deleting a review could delete its apartment). Usually you only cascade from parent (`Apartment`) to children (`Review`), not the other way around.
 
 ## JPA
 
