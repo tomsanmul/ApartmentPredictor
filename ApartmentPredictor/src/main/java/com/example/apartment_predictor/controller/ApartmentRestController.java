@@ -50,4 +50,9 @@ public class ApartmentRestController {
         apartmentService.deleteApartment(id);
     }
 
+    @PutMapping("/updateById")
+    public Apartment updateApartmentById(@RequestParam String id, @RequestBody Apartment apartment){
+        return apartmentService.updateApartmentById(id, apartment);
+    }
+
 }
