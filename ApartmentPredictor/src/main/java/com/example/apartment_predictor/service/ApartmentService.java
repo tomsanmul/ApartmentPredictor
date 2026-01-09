@@ -28,7 +28,7 @@ public class ApartmentService {
        return apartmentRepository.save(apartment);
     }
 
-    public Apartment updateApartmentById (String id, Apartment apartment){
+    public Apartment updateApartmentById(String id, Apartment apartment) {
         if (id == null || apartment == null) {
             return null;
         }
@@ -39,19 +39,20 @@ public class ApartmentService {
         }
 
         Apartment existing = existingOpt.get();
-        existing.setPrice(apartment.getPrice());
-        existing.setArea(apartment.getArea());
-        existing.setBedrooms(apartment.getBedrooms());
-        existing.setBathrooms(apartment.getBathrooms());
-        existing.setStories(apartment.getStories());
-        existing.setMainroad(apartment.getMainroad());
-        existing.setGuestroom(apartment.getGuestroom());
-        existing.setBasement(apartment.getBasement());
-        existing.setHotwaterheating(apartment.getHotwaterheating());
-        existing.setAirconditioning(apartment.getAirconditioning());
-        existing.setParking(apartment.getParking());
-        existing.setPrefarea(apartment.getPrefarea());
-        existing.setFurnishingstatus(apartment.getFurnishingstatus());
+
+        if (apartment.getPrice() != null) existing.setPrice(apartment.getPrice());
+        if (apartment.getArea() != null) existing.setArea(apartment.getArea());
+        if (apartment.getBedrooms() != null) existing.setBedrooms(apartment.getBedrooms());
+        if (apartment.getBathrooms() != null) existing.setBathrooms(apartment.getBathrooms());
+        if (apartment.getStories() != null) existing.setStories(apartment.getStories());
+        if (apartment.getMainroad() != null) existing.setMainroad(apartment.getMainroad());
+        if (apartment.getGuestroom() != null) existing.setGuestroom(apartment.getGuestroom());
+        if (apartment.getBasement() != null) existing.setBasement(apartment.getBasement());
+        if (apartment.getHotwaterheating() != null) existing.setHotwaterheating(apartment.getHotwaterheating());
+        if (apartment.getAirconditioning() != null) existing.setAirconditioning(apartment.getAirconditioning());
+        if (apartment.getParking() != null) existing.setParking(apartment.getParking());
+        if (apartment.getPrefarea() != null) existing.setPrefarea(apartment.getPrefarea());
+        if (apartment.getFurnishingstatus() != null) existing.setFurnishingstatus(apartment.getFurnishingstatus());
 
         if (apartment.getReviews() != null) {
             existing.setReviews(apartment.getReviews());

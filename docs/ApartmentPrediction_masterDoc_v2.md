@@ -312,7 +312,7 @@ GET http://localhost:8080/api/apartment/getById?id=19a1b4c3-cfc8-4db2-885c-546db
 - The `id` is passed as a query string parameter (`?id=...`).
 - Often used for filtering/search endpoints, but can also be used for “by id” if you prefer.
 
-#### Optional: support *both* styles at once
+##### Optional: support *both* styles at once
 
 You can overload two methods (different mappings) so **both URLs work**:
 
@@ -345,13 +345,17 @@ Calls that will work
   GET http://localhost:8080/api/apartment/getById?id=19a1b4c3-cfc8-4db2-885c-546db0511463
   ```
 
-### Request/response Cycle
+#### POST, PUT & PATCH to update
+
+- [REST-CRUD_updatePUT](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/REST-CRUD_updatePUT.md)
+
+#### Request/response Cycle
 
 - [Spring Boot: cycle – albertprofe wiki](https://albertprofe.dev/springboot/boot-what-cycle.html)
 
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/code-restcontroller.png)
 
-### Postman documentation API REST
+#### Postman documentation API REST
 
 - [apartmentPredictorCRUD](https://documenter.getpostman.com/view/7473960/2sBXVeFs8L)
 
@@ -466,7 +470,7 @@ If you want *some* apartment info inside a review (or you want both directions s
 - **`@JsonIdentityInfo`** (serialize objects by id to avoid loops)
 - **DTOs** (best practice for non-trivial APIs: return `ReviewDto`, `ApartmentDto` instead of entities)
 
-#### Cascade
+##### Cascade
 
 Unrelated to `@JsonIgnore`, but worth flagging: `@JoinColumn` should typically go with `@ManyToOne`, but **`@ManyToOne` generally should not use `cascade = CascadeType.ALL`** (deleting a review could delete its apartment). Usually you only cascade from parent (`Apartment`) to children (`Review`), not the other way around.
 
