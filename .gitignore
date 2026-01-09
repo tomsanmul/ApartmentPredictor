@@ -1,1 +1,48 @@
-docs/appends/JPA_Before_Annotatons:_one-to-many-xml.md
+# =========================
+# Java
+# =========================
+*.class
+*.log
+
+# =========================
+# Maven
+# =========================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+dependency-reduced-pom.xml
+
+# =========================
+# Gradle
+# =========================
+.gradle/
+build/
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+!.vscode/extensions.json
+
+# =========================
+# IntelliJ / Eclipse (por si acaso)
+# =========================
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Logs & temp
+# =========================
+*.tmp
+*.swp
