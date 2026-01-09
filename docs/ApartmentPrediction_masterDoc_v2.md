@@ -1,8 +1,8 @@
-# ApartmentPredictor masterDoc v1
+# ApartmentPredictor masterDoc v2
 
 ## Summary
 
-### References
+### All References
 
 - Reference project: [Spring Boot: H2 DB and Thymeleaf – albertprofe wiki](https://albertprofe.dev/springboot/boot-what-create-th-h2.html)
 - Microservices: https://spring.io/]
@@ -13,8 +13,23 @@
 Historical notes:
 
 - [Spring Framework – albertprofe wiki](https://albertprofe.dev/spring/spring-basics.html)
-
 - [JPA Before Annotatons one-to-many xml](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA_Before_Annotatons:_one-to-many-xml.md)
+
+#### Api Rest references
+
+- What is api rest:
+  
+  - [Network: API Rest – albertprofe wiki](https://albertprofe.dev/devops/devops-network-rest.html)
+  - [What is a REST API?](https://www.redhat.com/en/topics/api/what-is-a-rest-api) /  [What is a REST Api, GoogleCloud](https://cloud.google.com/discover/what-is-rest-api)
+
+- API REST test tools:
+  
+  - [postman](https://www.postman.com/) / [Postman docs](https://learning.postman.com/docs/sending-requests/requests/)
+  - [Swagger](https://swagger.io/) / [OpenApi](https://springdoc.org/)
+
+- [restaurantManager controller](https://github.com/AlbertProfe/restaurantManager/blob/master/src/main/java/dev/example/restaurantManager/controller/BookingController.java)
+
+- [Booking Controller](https://github.com/AlbertProfe/restaurantManager/blob/master/src/main/java/dev/example/restaurantManager/controller/BookingController.java) / [LibraryRestController](https://github.com/AlbertProfe/viladoms2022books/blob/master/libraryRest/src/main/java/com/example/myfirstprojectspring/LibraryRestController.java)
 
 ### Product Goal
 
@@ -30,104 +45,39 @@ From source:
 
 ### Version goal
 
-> We are defining a CRUD service in Spring Boot for Apartment, Owners, Reviewers and Post entities, then test them to list, create, edit, delete, and assign posts to apartments with <mark>JUnit</mark>.
+> We are defining a Rest Controller in Spring Boot for Apartment and Review entities, then test them to list, create, edit, delete, and assign reviews to apartments with <mark>Postman</mark> test tool.
 
 ## Project commits
 
 - [Commits · AlbertProfe/ApartmentPredictor · GitHub](https://github.com/AlbertProfe/ApartmentPredictor/commits/master/)
 
-## Create project
-
-### Using the CLI
-
-> The Spring Boot CLI (Command-Line Interface) can be installed manually by using <mark>SDKMAN</mark>! (the SDK Manager) or by using Homebrew or MacPorts if you are an OSX user. See [Installing the Spring Boot CLI](https://docs.spring.io/spring-boot/installing.html#getting-started.installing.cli) in the “Getting Started” section for comprehensive installation instructions.
-
-- [Installing Spring Boot :: Spring Boot](https://docs.spring.io/spring-boot/installing.html#getting-started.installing.cli)
-
-- [Using the CLI :: Spring Boot](https://docs.spring.io/spring-boot/cli/using-the-cli.html)
-
-By CLI `Spring init`
-
-```textile
-[Tue Dec 02 11:09:02] albert@albert-VirtualBox:~
-$ spring init --dependencies=web,data-jpa,h2,devtools --build=maven --java-version=21 --name=ApartmentPredictor --artifactId=apartment-predictor --groupId=com.example ApartmentPredictor
-```
-
-```text
-spring init 
-    --dependencies=web,data-jpa,h2,devtools
-    --build=maven 
-    --java-version=21 
-    --name=ApartmentPredictor 
-    --artifactId=apartment-predictor 
-    --groupId=com.example ApartmentPredictor
-```
-
-### Spring Init
-
-- https://start.spring.io/
-
 ### Project structure
 
 ```textile
-[Tue Dec 02 17:12:58] albert@albert-VirtualBox:~/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor (master)
-$ tree 
-.
-├── HELP.md
-├── mvnw
-├── mvnw.cmd
-├── pom.xml
-├── src
-│   ├── main
-│   │   ├── java
-│   │   │   └── com
-│   │   │       └── example
-│   │   │           └── apartment_predictor
-│   │   │               ├── Apartment.java
-│   │   │               ├── ApartmentPredictorApplication.java
-│   │   │               ├── Owner.java
-│   │   │               ├── Post.java
-│   │   │               └── Reviewer.java
-│   │   └── resources
-│   │       ├── application.properties
-│   │       ├── static
-│   │       └── templates
-│   └── test
-│       └── java
-│           └── com
-│               └── example
-│                   └── apartment_predictor
-│                       └── ApartmentPredictorApplicationTests.java
-└── target
-    ...
-
-34 directories, 19 files
-
-
-[Tue Dec 09 11:40:21] albert@albert-VirtualBox:~/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src (master)
-$ tree
 .
 ├── main
-│   ├── java
-│   │   └── com
-│   │       └── example
-│   │           └── apartment_predictor
-│   │               ├── ApartmentPredictorApplication.java
-│   │               ├── model
-│   │               │   ├── Apartment.java
-│   │               │   ├── Owner.java
-│   │               │   ├── Reviewer.java
-│   │               │   └── Review.java
-│   │               ├── repository
-│   │               │   ├── ApartmentRepository.java
-│   │               │   └── ReviewRepository.java
-│   │               └── service
-│   │                   ├── ApartmentService.java
-│   │                   └── ReviewService.java
-│   └── resources
-│       ├── application.properties
-│       ├── static
-│       └── templates
+│   ├── java
+│   │   └── com
+│   │       └── example
+│   │           └── apartment_predictor
+│   │               ├── ApartmentPredictorApplication.java
+│   │               ├── model
+│   │               │   ├── Apartment.java
+│   │               │   ├── Owner.java
+│   │               │   ├── Reviewer.java
+│   │               │   └── Review.java
+│   │               ├── controller
+│   │               │   ├── ApartmentRestController.java
+│   │               ├── repository
+│   │               │   ├── ApartmentRepository.java
+│   │               │   └── ReviewRepository.java
+│   │               └── service
+│   │                   ├── ApartmentService.java
+│   │                   └── ReviewService.java
+│   └── resources
+│       ├── application.properties
+│       ├── static
+│       └── templates
 └── test
     └── java
         └── com
@@ -183,6 +133,8 @@ public class Apartment {
     private Integer parking;
     private String prefarea;
     private String furnishingstatus;
+    // @OneToMany
+    private List reviews;
 }
 ```
 
@@ -209,51 +161,11 @@ public class Review {
     private String content;
     private int rating;
     private LocalDate reviewDate;
-}
+    // @ManyToOne
+    private Apartment aparment;
 ```
 
-### UML
-
-Here are very brief, concrete `restaurant-related` examples for each **UML** class diagram relationship in [Class diagrams | Mermaid](https://mermaid.js.org/syntax/classDiagram.html):
-
-- **Inheritance (Generalization):**  
-  Chef --|> Employee  
-  Chef is a type of Employee.
-- **Composition:**  
-  Menu --* MenuItem  
-  Menu is composed of MenuItems; MenuItems can’t exist without the Menu.
-- **Aggregation:**  
-  Restaurant --o Table  
-  Restaurant has Tables, but Tables can exist if the Restaurant is closed.
-- **Association:**  
-  Waiter --> Order  
-  Waiter takes Orders.
-- **Link (Solid):**  
-  Customer -- Bill  
-  Customer is directly connected to Bill, representing a specific interaction.
-- **Dependency:**  
-  Receipt ..> Printer  
-  Receipt depends on Printer (uses it temporarily).
-- **Realization:**  
-  CardPayment ..|> PaymentMethod  
-  CardPayment realizes (implements) PaymentMethod interface.
-- **Link (Dashed):**  
-  Chef .. Kitchen  
-  Chef is loosely connected to Kitchen (less specific/weak association).
-
-```mermaid
-classDiagram
-Chef --|> Employee : Inheritance
-Menu --* MenuItem : Composition
-Restaurant --o Table : Aggregation
-Waiter --> Order : Association
-Customer -- Bill : Link(Solid)
-Receipt ..> Printer : Dependency
-CardPayment ..|> PaymentMethod : Realization
-Chef .. Kitchen : Link(Dashed)
-```
-
-#### UML V1.0 ApartmentPredictor
+## UML V2.0 ApartmentPredictor
 
 - [UML mermaid](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/ApartmentPredictor-uml_v1.md)
 
@@ -267,7 +179,11 @@ Chef .. Kitchen : Link(Dashed)
 > 
 > **It is MC (Model-Controller) layered**, with Test invoking Service (buisness logic) → Repository (data access) → DB, enforcing s<mark>eparation of concerns. </mark>
 > 
-> The goal is to validate application logic and data access without external infrastructure, enabling fast, isolated tests.
+> The goal is to:
+> 
+> - validate application logic and data access without external infrastructure, enabling fast, isolated tests.
+> 
+> - validate **Rest Controle**r layer and <mark>data publising with Postman tool.</mark>
 
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/mc_uml-junittest_v1.png)
 
@@ -285,119 +201,274 @@ This provides basic `CRUD` (Create, Read, Update, Delete) operations for the `Ap
 
 > The repository serves as the data access layer for apartment-related operations in the apartment predictor application.
 
-### Command Line Runner
+### Rest Controller
 
-> The [ApartmentPredictorApplication](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/ApartmentPredictorApplication.java:9:0-126:1) implements `CommandLineRunner`, which <mark>executes code after the Spring Boot application starts</mark>. 
+![](https://www.gstatic.com/bricks/image/321862a0-3a14-4abb-a148-36bb8781c0f7.png)
 
-The **CommandLineRunner** serves as a data initialization mechanism, populating the database with test data upon application startup.
+A REST API is an [application programming interface (API)](https://www.redhat.com/en/topics/api/what-are-application-programming-interfaces) that follows the design principles of the REST architectural style. REST is short for **representational state transfer**, and is a set of rules and guidelines about how you should build a web API.
+
+#### What is a REST controller?
+
+In **Spring Boot**, a **REST controller** is a Java class that:
+
+- **Receives HTTP requests** from clients (browser, Postman, frontend app)
+- **Runs your backend logic** (usually by calling a `Service`)
+- **Returns data** (usually JSON) as the HTTP response
+- Methods annotated with **request mappings**:
+  - (e.g., `@GetMapping`, `@PostMapping`) handle web requests, HTTP.
+
+In code, it’s typically a class annotated with:
+
+- `@RestController`
+
+`@RestController` is basically:
+
+- `@Controller` (it’s a web controller)
+- plus `@ResponseBody` by default (so return values are written directly to the HTTP response body, commonly as JSON)
+
+So when your method returns an [Apartment](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/model/Apartment.java:8:0-219:1), Spring automatically serializes it into JSON.
+
+#### What is an endpoint created by a REST controller?
+
+An **endpoint** is a specific **HTTP route** (URL + HTTP method) that your backend exposes.
+
+An endpoint is defined by combining:
+
+- **Base path** on the controller (example: `@RequestMapping("api/apartment")`)
+- **Method path** on a handler (example: `@GetMapping("/getById/{id}")`)
+- **HTTP method** (`GET`, `POST`, `PUT`, `DELETE`, etc.)
+
+#### Apartment Controller
 
 ```java
-package com.example.apartment_predictor;
-
-import com.example.apartment_predictor.model.Apartment;
-import com.example.apartment_predictor.repository.ApartmentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class ApartmentPredictorApplication implements CommandLineRunner {
+@RestController
+@RequestMapping("api/apartment")
+public class ApartmentRestController {
 
     @Autowired
-    private ApartmentRepository apartmentRepository;
+    ApartmentService apartmentService;
 
-
-    public static void main(String[] args) {
-        SpringApplication.run(ApartmentPredictorApplication.class, args);
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        System.out.println("Creating apartment objects...");
-
-        // Create apartment objects based on your sample data
-        Apartment apartment1 = new Apartment(
-                13300000L,    // price
-                7420,         // area
-                4,            // bedrooms
-                2,            // bathrooms
-                3,            // stories
-                "yes",        // mainroad
-                "no",         // guestroom
-                "no",         // basement
-                "no",         // hotwater
-                "yes",        // heating
-                "yes",        // airconditioning
-                2,            // parking
-                "yes",        // prefarea
-                "furnished"   // furnishingstatus
-        );
-
-
-
-        // Create additional sample apartments
-        Apartment apartment2 = new Apartment(
-                8500000L,     // price
-                5200,         // area
-                3,            // bedrooms
-                2,            // bathrooms
-                2,            // stories
-                "yes",        // mainroad
-                "yes",        // guestroom
-                "no",         // basement
-                "yes",        // hotwater
-                "no",         // heating
-                "yes",        // airconditioning
-                1,            // parking
-                "no",         // prefarea
-                "semi-furnished" // furnishingstatus
-        );
-
-        Apartment apartment3 = new Apartment(
-                6200000L,     // price
-                3800,         // area
-                2,            // bedrooms
-                1,            // bathrooms
-                1,            // stories
-                "no",         // mainroad
-                "no",         // guestroom
-                "yes",        // basement
-                "yes",        // hotwater
-                "no",         // heating
-                "no",         // airconditioning
-                0,            // parking
-                "yes",        // prefarea
-                "unfurnished" // furnishingstatus
-        );
-
-        apartmentRepository.save(apartment1);
-        apartmentRepository.save(apartment2);
-        apartmentRepository.save(apartment3);
-
-        int index = 0;
-        System.out.println("\n=== Apartments in the Database ===");
-        for (Apartment apartment : apartmentRepository.findAll()){
-            index++;
-            System.out.println("#" + index);
-             System.out.println(apartment);
-        }
-
-        //apartmentRepository.findAll().forEach(System.out::println);
+    @GetMapping("/getAll")
+    public Iterable<Apartment> getAllApartments(){
+        return apartmentService.findAll();
     }
 
 
+    @GetMapping("/getById")
+    public Apartment getApartmentById(@RequestParam String id){
+        return apartmentService.findApartmentById(id);
+
+    }
 }
 ```
 
-### Tests JUnit
+#### PathVariable vs RequestParam
 
-- [Java SE: JUnit and TDD – albertprofe wiki](https://albertprofe.dev/javase/se-concepts-tdd.html)
-- [SpringBoot Scope Management](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/SpringBoot_Scope_Management.md)
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/postman-getById-1.png)
 
-## Annotations
+Using `@PathVariable`
 
-- [SpringBoot Annotations](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/SpringBoot-Annotations.md)
+**Controller mapping**
+
+```java
+@GetMapping("/getById/{id}")
+public Apartment getApartmentById(@PathVariable String id) {
+    return apartmentService.findApartmentById(id);
+}
+```
+
+**How you call it**
+
+```text
+GET http://localhost:8080/api/apartment/getById/19a1b4c3-cfc8-4db2-885c-546db0511463
+```
+
+**Key point**
+
+- The `id` is part of the URL path.
+- Best fit for “resource by id” in REST style (`/apartments/{id}` pattern).
+
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/postman-getById-2.png)
+
+Using `@RequestParam` (query parameter style)
+
+**Controller mapping**
+
+```java
+@GetMapping("/getById")
+public Apartment getApartmentById(@RequestParam String id) {
+    return apartmentService.findApartmentById(id);
+}
+```
+
+**How you call it**
+
+```text
+GET http://localhost:8080/api/apartment/getById?id=19a1b4c3-cfc8-4db2-885c-546db0511463
+```
+
+**Key point**
+
+- The `id` is passed as a query string parameter (`?id=...`).
+- Often used for filtering/search endpoints, but can also be used for “by id” if you prefer.
+
+#### Optional: support *both* styles at once
+
+You can overload two methods (different mappings) so **both URLs work**:
+
+- `/getById/{id}`
+- `/getById?id=...`
+
+```java
+@GetMapping("/getById/{id}")
+public Apartment getApartmentByIdPath(@PathVariable String id) {
+    return apartmentService.findApartmentById(id);
+}
+
+@GetMapping("/getById")
+public Apartment getApartmentByIdParam(@RequestParam String id) {
+    return apartmentService.findApartmentById(id);
+}
+```
+
+Calls that will work
+
+- **PathVariable style**
+  
+  ```text
+  GET http://localhost:8080/api/apartment/getById/19a1b4c3-cfc8-4db2-885c-546db0511463
+  ```
+
+- **RequestParam style**
+  
+  ```text
+  GET http://localhost:8080/api/apartment/getById?id=19a1b4c3-cfc8-4db2-885c-546db0511463
+  ```
+
+### Request/response Cycle
+
+- [Spring Boot: cycle – albertprofe wiki](https://albertprofe.dev/springboot/boot-what-cycle.html)
+
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/code-restcontroller.png)
+
+### Postman documentation API REST
+
+- [apartmentPredictorCRUD](https://documenter.getpostman.com/view/7473960/2sBXVeFs8L)
+
+#### ResponseBody
+
+- [Lab#SB08-3: H2 and API Rest – albertprofe wiki](https://albertprofe.dev/springboot/sblab8-3.html#responseentity)
+
+`ResponseEntity` is Spring’s **full HTTP response wrapper (container)**. Returning `Iterable<Apartment>` only sends the JSON body, but returning `ResponseEntity<Iterable<Apartment>>` lets you control **everything** about the HTTP response: status code, headers, and body.
+
+Why it’s relevant
+
+- **Status control**: You can return `200 OK`, `201 CREATED`, `204 NO_CONTENT`, `404 NOT_FOUND`, etc., depending on business logic. This makes your API *semantic* (clients can react properly).
+- **Headers**: You can attach metadata like versioning, caching (`Cache-Control`), pagination info, custom flags, or diagnostics (like your `"Status"` header). Clients and gateways can use headers without parsing the body.
+- **Cleaner error handling**: You can return a different body for errors (e.g., an error DTO) with the correct status, instead of always `200`.
+
+How it works
+
+`ResponseEntity` is a container with:
+
+- **HTTP status** (default is 200 if you use `ok()`)
+- **HTTP headers**
+- **Body** (your `Iterable<Apartment>`)
+
+Spring MVC uses this to build the actual HTTP response. It then uses Jackson to serialize the body to JSON, and writes headers/status to the network response.  
+
+#### Nested Objects
+
+> From previous version we had the 1:n Apartment <> Review OneToMany configured with JPA.
+
+```java
+@Entity
+public class Apartment {
+
+    @Id
+    protected String id;
+    private Long price;
+    protected Integer area;
+    protected Integer bedrooms;
+    private Integer bathrooms;
+    private Integer stories;
+    private String mainroad;
+    private String guestroom;
+    private String basement;
+    private String hotwaterheating;
+    private String airconditioning;
+    private Integer parking;
+    private String prefarea;
+    private String furnishingstatus;
+
+    @OneToMany(
+            mappedBy = "apartment",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
+    private List<Review> reviews = new ArrayList<>();
+}
+
+@Entity
+public class Review {
+
+    @Id
+    private String id;
+    private String title;
+    private String content;
+    private int rating;
+    private LocalDate reviewDate;
+    @JsonIgnore
+    @JoinColumn(name = "apartment_fk")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Apartment apartment;
+}
+```
+
+`@JsonIgnore` is there to prevent **infinite recursion (circular reference)** and/or overly large JSON when you serialize your JPA entities to JSON (typically in REST responses).
+
+**What causes the problem in `Apartment` ↔ `Review`**
+
+In a bidirectional relationship you usually have:
+
+- `Apartment` has `List<Review> reviews` (`@OneToMany(mappedBy="apartment")`)
+- `Review` has `Apartment apartment` (`@ManyToOne`)
+
+When Jackson (the JSON serializer Spring Boot uses) tries to serialize an `Apartment`, it will include:
+
+1. the apartment fields
+2. the `reviews` list
+3. for each `Review`, it serializes its fields, including `review.apartment`
+4. that `apartment` again contains `reviews`
+5. repeat forever → **StackOverflowError** / “Infinite recursion” exception
+
+Putting `@JsonIgnore` on `Review.apartment` breaks that loop by saying:
+
+- **Serialize `Review`, but do not include its `apartment` property in JSON.**
+
+So you can safely return an `Apartment` with its reviews, and each review won’t contain the whole apartment again.
+
+Why it’s on the `ManyToOne` side in your case
+
+Common API shape:
+
+- `GET /apartments/{id}` returns the apartment and its `reviews`
+- Each review doesn’t need to embed the full apartment again
+
+So ignoring `Review.apartment` is usually the simplest choice.
+
+> Important: it’s not a JPA requirement : `@JsonIgnore` is **only for JSON serialization**, not for the database relationship. JPA doesn’t need it.
+
+##### Alternatives (often better than `@JsonIgnore`)
+
+If you want *some* apartment info inside a review (or you want both directions sometimes), consider:
+
+- **`@JsonManagedReference` / `@JsonBackReference`** (classic parent/child handling)
+- **`@JsonIdentityInfo`** (serialize objects by id to avoid loops)
+- **DTOs** (best practice for non-trivial APIs: return `ReviewDto`, `ApartmentDto` instead of entities)
+
+#### Cascade
+
+Unrelated to `@JsonIgnore`, but worth flagging: `@JoinColumn` should typically go with `@ManyToOne`, but **`@ManyToOne` generally should not use `cascade = CascadeType.ALL`** (deleting a review could delete its apartment). Usually you only cascade from parent (`Apartment`) to children (`Review`), not the other way around.
 
 ## JPA
 

@@ -112,6 +112,8 @@ class ApartmentPredictorApplicationTests {
             System.out.println(review);
         }
 
+        
+
 
     }
 
