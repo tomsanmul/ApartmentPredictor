@@ -98,11 +98,11 @@ public class ApartmentService {
         apartment.setBathrooms(faker.number().numberBetween(1, 4));
         apartment.setStories(faker.number().numberBetween(1, 3));
 
-        apartment.setMainroad(faker.address().streetName());
-        apartment.setGuestroom(faker.expression(null));
+        //apartment.setMainroad(faker.address().streetName());
+        //apartment.setGuestroom(faker.expression(null));
+        
         int resultado = (int)(Math.random() * 2);
         apartment.setBasement(String.valueOf(resultado));
-        
         apartment.setAirconditioning(Math.random() < 0.5 ? "no" : "yes");
         apartment.setParking(faker.number().numberBetween(0, 4));
 
