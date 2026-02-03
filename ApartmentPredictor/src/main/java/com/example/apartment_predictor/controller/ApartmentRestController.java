@@ -48,7 +48,7 @@ public class ApartmentRestController {
         return apartmentService.createApartment(apartment);
     }
 
-    @PostMapping("/create_apartmentsr")
+    @PostMapping("/create_apartments")
         public String createRandomApartments(@RequestParam Integer quantity) {
         apartmentService.createRandomApartments(quantity);
         return (quantity + " apartments created!");
