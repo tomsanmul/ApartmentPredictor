@@ -48,6 +48,12 @@ public class ApartmentRestController {
         return apartmentService.createApartment(apartment);
     }
 
+    @PostMapping("/create_apartmentsr")
+        public ResponseEntity<String> createRandomApartments(@RequestParam Integer amount) {
+        apartmentService.createRandomApartments(amount);
+        return ResponseEntity.ok(amount + " apartments created successfully");
+    }
+
     @PostMapping("/update")
     public Apartment updateApartment(@RequestBody Apartment apartment){
         return apartmentService.updateApartment(apartment);
