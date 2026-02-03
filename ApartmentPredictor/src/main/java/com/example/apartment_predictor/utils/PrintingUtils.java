@@ -1,41 +1,42 @@
 package com.example.apartment_predictor.utils;
 
-import com.example.apartment_predictor.model.Apartment;
-import com.example.apartment_predictor.repository.ApartmentRepository;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.repository.ApartmentRepository;
 
 @Component
 public class PrintingUtils {
     @Autowired
     private ApartmentRepository apartmentRepository;
 
-    public static void printList(List list) {
+    public static void printList(List<?> list) {
         for (Object obj : list) {
             System.out.println(obj);
         }
     }
 
-    public static void printList(List list, String title) {
+    public static void printList(List<?> list, String title) {
         System.out.println("\n=== " + title + " ===");
         for (Object obj : list) {
             System.out.println(obj);
         }
     }
 
-    public static void printApartments(CrudRepository apartmentRepository) {
-        // Display all apartments in the database
+    public static void printApartments(ApartmentRepository apartmentRepository) {
         int index = 0;
         System.out.println("\n=== Apartments in the Database ===");
-        for (Object apartment : apartmentRepository.findAll()) {
+
+        for (Apartment apartment : apartmentRepository.findAll()) {
             index++;
             System.out.println("#" + index);
             System.out.println(apartment);
         }
     }
+
 
     public static void printApartmentsList(Iterable<Apartment> apartments) {
         // Display all apartments in the database

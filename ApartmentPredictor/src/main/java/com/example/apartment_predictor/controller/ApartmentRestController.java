@@ -49,9 +49,9 @@ public class ApartmentRestController {
     }
 
     @PostMapping("/create_apartmentsr")
-        public ResponseEntity<String> createRandomApartments(@RequestParam Integer amount) {
-        apartmentService.createRandomApartments(amount);
-        return ResponseEntity.ok(amount + " apartments created successfully");
+        public String createRandomApartments(@RequestParam Integer quantity) {
+        apartmentService.createRandomApartments(quantity);
+        return (quantity + " apartments created!");
     }
 
     @PostMapping("/update")
