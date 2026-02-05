@@ -83,12 +83,12 @@ public class ApartmentService {
     public void findApartmentByPrice (){}
 
 
-    public void createRandomApartments(Integer amount) {
+    public void createRandomApartments(Integer quantity) {
 
     Faker faker = new Faker(Locale.forLanguageTag("es"));
     List<Apartment> apartments = new ArrayList<>();
 
-    for (int i = 0; i < amount; i++) {
+    for (int i = 0; i < quantity; i++) {
 
         Apartment apartment = new Apartment();
 
