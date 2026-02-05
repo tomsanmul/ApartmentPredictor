@@ -355,8 +355,6 @@ Calls that will work
 
 Get operation: GET Cycle: Get all Apartments.
 
-
-
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/code-restcontroller.png)
 
 Post operation: POST Cycle: Create New Apartment
@@ -590,7 +588,43 @@ Database Dialect and DDL
 
 ### Populate DB
 
-- [ImportCSVtoH2](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/ImportCSVtoH2.md)
+> Spring Boot offers four practical methods to import synthetic data using H2 database.
+
+**data.sql Method**
+
+Place `data.sql` in `src/main/resources`. Spring Boot auto-executes it on startup for embedded databases like H2. Use the Lab#SB09-1 example with UUID() inserts for Books, Speakers, then Conferences linking via subqueries. 
+
+- Set `spring.jpa.defer-datasource-initialization=true` and `spring.sql.init.mode=always` in `application.properties` for non-embedded DBs.[[albertprofe](https://albertprofe.dev/springboot/sblab9-1.html)]​
+
+**CSV Import Method**
+
+Generate CSV files externally, then use H2's `LOAD DATA INFILE` or Spring's `FlatFileItemReader`. 
+
+- Reference the ApartmentPredictor GitHub guide for H2-specific syntax matching your entity columns (id, title, author, etc.). Configure via `application.yml` with `spring.batch` for batch processing.[[albertprofe](https://albertprofe.dev/springboot/sblab9-1.html)]​
+
+**Java Faker Code Method**
+
+Add DataFaker dependency, inject `Faker` bean, and use `@PostConstruct` or `CommandLineRunner` to populate repositories. Generate realistic names, emails, dates, and UUIDs matching your `@Builder` entities: 
+
+- `Conference.builder().title(faker.book().title()).build()`. Ideal for dynamic volumes.[[github](https://github.com/datafaker-net/datafaker)]​
+
+**REST API Method**
+
+Create `@RestController` endpoint `/api/fake-data` returning `List<Conference>`. 
+
+- Use Faker inside to stream synthetic records on-demand. Call via Postman or curl for testing Vaadin views without DB setup. Scales for your Spring I/O lab demos.[[dev](https://dev.to/wallaceespindola/generating-realistic-fake-data-in-java-with-quarkus-datafaker-easyrandom-5gi8)]​
+
+Import data:
+
+- [From data.sql Lab#SB09-1: SpringIO Conference](https://albertprofe.dev/springboot/sblab9-1.html#sql-data-initialization-with-data.sql)   sql-data-initialization-with-data.sql)
+
+- [ImportCSVtoH2 - ApartmentPredictor/docs/appends/SQL-ImportCSVtoH2.md at master](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/SQL-ImportCSVtoH2.md)
+
+Creating it at code:
+
+- [PopulateApartmentsAPI - ApartmentPredictor/docs/appends/JPA-PopulateApartmentsAPI.md at master](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-PopulateApartmentsAPI.md)
+
+- [Java Faker Lab#SB08-3: H2 and API Rest](https://albertprofe.dev/springboot/sblab8-3.html#java-faker)
 
 ## Maven
 

@@ -2,6 +2,7 @@ package com.example.apartment_predictor.controller;
 
 import com.example.apartment_predictor.model.Apartment;
 import com.example.apartment_predictor.service.ApartmentService;
+import com.example.apartment_predictor.utils.PopulateDB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,9 @@ public class ApartmentRestController {
 
     @Autowired
     ApartmentService apartmentService;
+
+    @Autowired
+    PopulateDB populateDB;
 
     @GetMapping("/getAll")
     public ResponseEntity<Iterable<Apartment>> getAllApartments(){
@@ -54,5 +58,17 @@ public class ApartmentRestController {
     public Apartment updateApartmentById(@RequestParam String id, @RequestBody Apartment apartment){
         return apartmentService.updateApartmentById(id, apartment);
     }
+
+    @GetMapping("/populate")
+    public ResponseEntity<String> populateApartments(@RequestParam int qty) {
+        // CALL to PopulateDB.populateApartments() method
+        // to populate the database with random apartments
+        int qtyApartmenTsCreated = populateDB.populateApartments(qty);
+        if (qtyApartmenTsCreated > 0)
+            return ResponseEntity.ok("Populated apartments: " + qtyApartmenTsCreated);
+        else
+            return ResponseEntity.badRequest().body("Failed to populate apartments");
+    }
+    
 
 }
