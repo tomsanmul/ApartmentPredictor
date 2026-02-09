@@ -28,8 +28,20 @@ public class ApartmentService {
         return apartmentRepository.save(apartment);
     }
 
-    public String assignSchoolsToApartment(String getApartmentId, List<School> schoolList){
+    public String assignSchoolsToApartment(String ApartmentId, List<School> schoolList){
+
+        //Compruebo primero si el AparmentId existe
+        if (ApartmentId == null) {
+            return null;
+        }
+        Optional<Apartment> existingOpt = apartmentRepository.findById(ApartmentId);
+        if (existingOpt.isEmpty()) {
+            return null;
+        }
+
+        //Si sí existem, asignamos las Schools al apartamento
         
+
         return ("ok");
     }   
 
