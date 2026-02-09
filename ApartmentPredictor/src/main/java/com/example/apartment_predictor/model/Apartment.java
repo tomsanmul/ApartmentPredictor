@@ -1,10 +1,15 @@
 package com.example.apartment_predictor.model;
 
-import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Apartment {
@@ -24,7 +29,9 @@ public class Apartment {
     private Integer parking;
     private String prefarea;
     private String furnishingstatus;
-
+    
+    @ManyToMany private List<School> school = new ArrayList<>();
+    
     @OneToMany(
             mappedBy = "apartment",
             cascade = CascadeType.ALL,

@@ -1290,3 +1290,15 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: D:/Mis Proyectos
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 62 more
 >>>>>>> a824f12a659684f33a3a60bf9821281d150471a7
+2026-02-09 12:42:12.991938+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM SCHOOL SCHOOL [*]SCHOOL"; SQL statement:
+SELECT * FROM SCHOOL SCHOOL SCHOOL [42000-224]
+2026-02-09 12:42:35.103311+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM SCHOOL SCHOOL_APARTMENTS [*]APARTMENT_SCHOOLS"; SQL statement:
+SELECT * FROM SCHOOL SCHOOL_APARTMENTS APARTMENT_SCHOOLS [42000-224]
+2026-02-09 12:42:37.263191+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM SCHOOL SCHOOL_APARTMENTS [*]APARTMENT_SCHOOLS APARTMENT_SCHOOL"; SQL statement:
+SELECT * FROM SCHOOL SCHOOL_APARTMENTS APARTMENT_SCHOOLS APARTMENT_SCHOOL [42000-224]
+2026-02-09 12:47:37.262436+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "DROP [*]APARTMENT_SCHOOLS"; expected "TABLE, INDEX, USER, SEQUENCE, CONSTANT, TRIGGER, MATERIALIZED, VIEW, ROLE, ALIAS, SCHEMA, ALL OBJECTS, DOMAIN, TYPE, AGGREGATE, SYNONYM"; SQL statement:
+DROP APARTMENT_SCHOOLS [42001-224]

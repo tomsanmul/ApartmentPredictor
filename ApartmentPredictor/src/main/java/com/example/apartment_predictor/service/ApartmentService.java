@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.apartment_predictor.model.Apartment;
 import com.example.apartment_predictor.model.Review;
+import com.example.apartment_predictor.model.School;
 import com.example.apartment_predictor.repository.ApartmentRepository;
 import com.github.javafaker.Faker;
 
@@ -26,6 +27,12 @@ public class ApartmentService {
     public Apartment createApartment(Apartment apartment){
         return apartmentRepository.save(apartment);
     }
+
+    public String assignSchoolsToApartment(String getApartmentId, List<School> schoolList){
+        
+        return ("ok");
+    }   
+
 
     public Apartment updateApartment (Apartment apartment){
 

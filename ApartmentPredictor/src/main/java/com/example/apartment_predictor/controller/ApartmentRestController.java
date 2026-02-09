@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.model.AssignSchoolsRequest;
 import com.example.apartment_predictor.service.ApartmentService;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -54,6 +55,16 @@ public class ApartmentRestController {
         return (quantity + " apartments created!");
     }
 
+    @PostMapping("/assignSchools") public String assignSchoolsToApartment(
+        @RequestBody AssignSchoolsRequest request) {
+        apartmentService.assignSchoolsToApartment(
+        request.getApartmentId(),
+        request.getSchools()
+         );
+    return "ok";
+    }
+
+
     @PostMapping("/update")
     public Apartment updateApartment(@RequestBody Apartment apartment){
         return apartmentService.updateApartment(apartment);
@@ -68,5 +79,7 @@ public class ApartmentRestController {
     public Apartment updateApartmentById(@RequestParam String id, @RequestBody Apartment apartment){
         return apartmentService.updateApartmentById(id, apartment);
     }
+
+    
 
 }
