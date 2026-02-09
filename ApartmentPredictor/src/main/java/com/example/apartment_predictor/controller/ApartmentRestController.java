@@ -18,7 +18,7 @@ import com.example.apartment_predictor.service.ApartmentService;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("api/apartment")
+@RequestMapping("/api/apartment")
 public class ApartmentRestController {
 
     @Autowired
