@@ -1,4 +1,4 @@
-# ApartmentPredictor masterDoc v2
+# ApartmentPredictor masterDoc v3
 
 ## Summary
 
@@ -47,7 +47,7 @@ From source:
 
 > We are defining a Rest Controller in Spring Boot for **Apartment, Review, Reviewer, Owner, PropiertyContract and School** entities, then test them to list, create, edit, delete, and assign reviews to apartments with <mark>Postman</mark> test tool.
 > 
-> We also are working in Renovations.
+> We also are working in **Renovations** and **Person** as superclass for Owner and Reviewer.
 
 ## Project commits
 
@@ -56,12 +56,40 @@ From source:
 ### Project structure
 
 ```textile
+[Tue Feb 10 11:04:35] albert@albert-VirtualBox:~/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor (master)
+$ tree
+.
+├── ApartmentPredictorApplication.java
+├── controller
+│   ├── ApartmentRestController.java
+│   └── SchoolRestController.java
+├── model
+│   ├── Apartment.java
+│   ├── Duplex.java
+│   ├── House.java
+│   ├── Owner.java
+│   ├── Reviewer.java
+│   ├── Review.java
+│   └── School.java
+├── repository
+│   ├── ApartmentRepository.java
+│   ├── ReviewRepository.java
+│   └── SchoolRepository.java
+├── service
+│   ├── ApartmentService.java
+│   └── ReviewService.java
+└── utils
+    ├── PopulateDB.java
+    └── PrintingUtils.java
+
+6 directories, 17 files
+
 
 ```
 
 ## Data Model
 
-Java classes
+### Java classes
 
 ```java
 public class Apartment {
@@ -85,6 +113,26 @@ public class Apartment {
     private String furnishingstatus;
     // @OneToMany
     private List reviews;
+    //@ManyToMany
+    private List schools;
+}
+
+public class School {
+    
+    private String id;
+    private String name;
+    private String type;
+    private String location;
+    private int rating;
+    private boolean isPublic;
+}
+
+public class PropiertyContract {
+     private String id;
+     private String date;
+     private String registerNumberPropiertyContract;
+     private long valueRealState;  
+    
 }
 ```
 
@@ -113,7 +161,20 @@ public class Review {
     private LocalDate reviewDate;
     // @ManyToOne
     private Apartment aparment;
+}
+
+public class Reviewer {
+    private  String id;
+    private String name;
+    private String email;
+    private int age;
+
+}
 ```
+
+### UML
+
+todo
 
 ## Code
 
@@ -135,55 +196,6 @@ public class Review {
 
 - [apartmentPredictorCRUD](https://documenter.getpostman.com/view/7473960/2sBXVeFs8L)
 
-#### Nested Objects
-
-> From previous version we had the 1:n Apartment <> Review OneToMany configured with JPA.
-
-```java
-@Entity
-public class Apartment {
-
-    @Id
-    protected String id;
-    private Long price;
-    protected Integer area;
-    protected Integer bedrooms;
-    private Integer bathrooms;
-    private Integer stories;
-    private String mainroad;
-    private String guestroom;
-    private String basement;
-    private String hotwaterheating;
-    private String airconditioning;
-    private Integer parking;
-    private String prefarea;
-    private String furnishingstatus;
-
-    @OneToMany(
-            mappedBy = "apartment",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER)
-    private List<Review> reviews = new ArrayList<>();
-}
-
-@Entity
-public class Review {
-
-    @Id
-    private String id;
-    private String title;
-    private String content;
-    private int rating;
-    private LocalDate reviewDate;
-    @JsonIgnore
-    @JoinColumn(name = "apartment_fk")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Apartment apartment;
-}
-```
-
-
-
 ## JPA
 
 ### Summary
@@ -202,6 +214,138 @@ This is an **umbrella project which contains many subprojects** that are speci
 
 - [JPA Relationships Guide](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA_Relationships_Guide.md)
 - [JPA Relationships Implementation Rule](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA_RelationshipsImplementation_Rule.md)
+
+### Many-to-Many Apartment and School
+
+Many-to-many, **unidirectional**, Apartment is the **owning side**
+
+- **Cardinality**
+  - One [Apartment](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/model/Apartment.java:7:0-12:23) can be linked to many `School`s.
+  - One `School` can be linked to many [Apartment](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/model/Apartment.java:7:0-12:23)s (in the database via the join table), even though the `School` entity does **not** have an `apartments` field (because it’s **unidirectional**).
+- **Owning side**
+  - [Apartment](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/model/Apartment.java:7:0-12:23) is the owning side because it declares `@ManyToMany` + `@JoinTable`.
+  - `School` is not aware of the relationship in Java (no `mappedBy` on the other side).
+
+<mark>Join table is what stores the relationship</mark>
+
+Our mapping:
+
+```java
+@ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+@JoinTable(
+        name = "APARTMENT_SCHOOL_JOIN_TABLE",
+        joinColumns = @JoinColumn(name = "apartment_id"),
+        inverseJoinColumns = @JoinColumn(name = "school_id")
+)
+private List<School> schools = new ArrayList<>();
+```
+
+This creates/uses a join table:
+
+- **Table:** `APARTMENT_SCHOOL_JOIN_TABLE`
+- **Columns:**
+  - `apartment_id` → FK to [Apartment](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/model/Apartment.java:7:0-12:23)
+  - `school_id` → FK to `School`
+
+Each row means: “this apartment is connected to this school”.
+
+#### How it works in your REST controller
+
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/schoolsAssignToApartment-Flow/apartment-schools-controller.png)
+
+File: [src/main/java/com/example/apartment_predictor/controller/ApartmentRestController.java](cci:7://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/controller/ApartmentRestController.java:0:0-0:0)
+
+- Endpoint: `PUT /api/apartment/assignSchoolsToApartment`
+- Flow:
+  - Load the [Apartment](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/model/Apartment.java:7:0-12:23) by `apartmentId`
+  - Load all `School`s by `schoolIds`
+  - If some requested ids weren’t found, return `400 Bad Request`
+  - Update the relationship by adding schools to the apartment (you currently use [apartment.addSchools(schoolsFound)](cci:1://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/model/Apartment.java:10:4-13:5))
+  - Save the apartment → JPA writes rows into `APARTMENT_SCHOOL_JOIN_TABLE`
+  - Return `200 OK` with response headers and the saved apartment
+
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/schoolsAssignToApartment-Flow/postman-apartment-schools.png)
+
+```json
+{
+    "id": "fe9614a2-1a3f-403c-9822-4f5d027e13ed",
+    "price": 130000,
+    "area": 5,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "stories": 3,
+    "mainroad": "yes",
+    "guestroom": "no",
+    "basement": "no",
+    "hotwaterheating": "yes",
+    "airconditioning": "yes",
+    "parking": 2,
+    "prefarea": "yes",
+    "furnishingstatus": "furnished",
+    "reviews": [
+        {
+            "id": "7afe17a7-8fac-4847-a4b1-d934b2cc8a06",
+            "title": "Nice Apartment in Fifth Avenue",
+            "content": "This apartment exceeded my expectations. The location is perfect and the amenities are top-notch. Highly recommended for anyone looking for a comfortable stay.",
+            "rating": 5,
+            "reviewDate": "2025-12-11"
+        }
+    ],
+    "schools": [
+        {
+            "id": "87ffb224-a053-4c3d-b593-cab8cf2f457e",
+            "name": "Sunrise School",
+            "type": "religious",
+            "location": "East Side",
+            "rating": 4,
+            "public": false
+        },
+        {
+            "id": "a2afa2f1-bab1-4fa6-816e-b77b8f3e31cd",
+            "name": "Sunrise High School",
+            "type": "religious",
+            "location": "Downtown",
+            "rating": 4,
+            "public": false
+        },
+        {
+            "id": "d217c2be-5079-43c8-9ffb-631ea8642bba",
+            "name": "Hill Institute",
+            "type": "private",
+            "location": "East Side",
+            "rating": 1,
+            "public": false
+        }
+    ]
+}
+```
+
+#### How schools get created (PopulateDB)
+
+File: `src/main/java/com/example/apartment_predictor/utils/PopulateDB.java`
+
+- `PopulateDB` creates `School` entities in the database first.
+- Later, the controller assigns existing schools to an apartment by referencing their ids.
+- Because the relationship is managed from the [Apartment](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/model/Apartment.java:7:0-12:23) side, you only need to save/update the apartment to persist the join table links.
+
+Notes about `cascade = CascadeType.ALL`
+
+- With `CascadeType.ALL`, saving an [Apartment](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/model/Apartment.java:7:0-12:23) can also persist `School` objects **if they are new/transient**.
+- In your use case (schools already exist and you load them from [SchoolRepository](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/repository/SchoolRepository.java:5:0-6:1)), cascade isn’t strictly required for the join table update, but it won’t break things as long as you don’t accidentally attach brand-new `School` instances with duplicate ids.
+
+#### H2 Database tables
+
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/schoolsAssignToApartment-Flow/school-db.png)
+
+
+
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/schoolsAssignToApartment-Flow/apartment-schools-db.png)
+
+
+
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/schoolsAssignToApartment-Flow/apartment-db.png)
+
+
 
 ## H2 & application.properties
 
