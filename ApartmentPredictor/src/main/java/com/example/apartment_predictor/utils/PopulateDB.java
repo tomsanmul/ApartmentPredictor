@@ -1,9 +1,12 @@
 package com.example.apartment_predictor.utils;
 
 import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.model.School;
+import com.example.apartment_predictor.repository.SchoolRepository;
 import com.example.apartment_predictor.service.ApartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
@@ -11,6 +14,9 @@ public class PopulateDB {
 
     @Autowired
     ApartmentService apartmentService;
+
+    @Autowired
+    SchoolRepository schoolRepository;
 
     public int populateApartments(int qty) {
         int qtyApartmetnsCreated = 0;
@@ -66,5 +72,48 @@ public class PopulateDB {
 
         }
         return qtyApartmetnsCreated;
+    }
+
+    public int populateReviews(int qty) {
+        return 0;
+    }
+
+    public int populateReviewers(int qty) {
+        return 0;
+    }
+
+    public int populateSchools(int qty) {
+        int qtySchoolsCreated = 0;
+        if (qty <= 0) return 0;
+
+        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+
+        String[] schoolTypes = {"public", "private", "religious"};
+
+        String[] locations = {"Downtown", "Uptown", "Suburbs", "East Side", "West Side"};
+        String[] namePrefixes = {"Green", "Oak", "River", "Hill", "Sunrise", "Cedar", "Lakeside"};
+        String[] nameSuffixes = {"Academy", "School", "Institute", "High School", "College"};
+
+        for (int i = 0; i < qty; i++) {
+            String type = schoolTypes[rnd.nextInt(schoolTypes.length)];
+            String location = locations[rnd.nextInt(locations.length)];
+            int rating = rnd.nextInt(1, 6);
+            boolean isPublic = "public".equals(type);
+
+            String name = namePrefixes[rnd.nextInt(namePrefixes.length)] + " " + nameSuffixes[rnd.nextInt(nameSuffixes.length)];
+
+            School school = new School(name, type, location, rating, isPublic);
+            schoolRepository.save(school);
+
+            School schoolById = schoolRepository.findById(school.getId()).orElse(null);
+            if (schoolById != null) {
+                qtySchoolsCreated++;
+                System.out.println(
+                        "School #" + qtySchoolsCreated +
+                                "/" + qty + " created populateDB: " + schoolById);
+            }
+        }
+
+        return qtySchoolsCreated;
     }
 }

@@ -1,7 +1,6 @@
 package com.example.apartment_predictor.model;
 
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,11 +24,16 @@ public class Apartment {
     private String prefarea;
     private String furnishingstatus;
 
-    @OneToMany(
-            mappedBy = "apartment",
-            cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "apartment",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Review> reviews = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "APARTMENT_SCHOOL_JOIN_TABLE",
+            joinColumns = @JoinColumn(name = "apartment_id"),
+            inverseJoinColumns = @JoinColumn(name = "school_id")
+    )
+    private List<School> schools = new ArrayList<>();
 
     // Default constructor
     public Apartment() {
@@ -195,6 +199,22 @@ public class Apartment {
 
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
+    }
+
+    public List<School> getSchools() {
+        return schools;
+    }
+
+    public void setSchools(List<School> schools) {
+        this.schools = schools;
+    }
+
+    public void addSchool(School school) {
+        this.schools.add(school);
+    }
+
+    public void addSchools(List<School> schools ){
+       this.schools.addAll(schools);
     }
 
     @Override
