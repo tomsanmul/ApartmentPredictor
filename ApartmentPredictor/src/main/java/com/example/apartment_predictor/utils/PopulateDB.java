@@ -7,6 +7,7 @@ import com.example.apartment_predictor.service.ApartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
@@ -17,6 +18,48 @@ public class PopulateDB {
 
     @Autowired
     SchoolRepository schoolRepository;
+
+    //todo: all methods MUST return the objects created
+
+    public int populateAll(int qty) {
+        return 0;
+    }
+
+    // populate apartments and schools
+
+    public int populateSchools(int qty) {
+        int qtySchoolsCreated = 0;
+        if (qty <= 0) return 0;
+
+        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+
+        String[] schoolTypes = {"public", "private", "religious"};
+        String[] locations = {"Downtown", "Uptown", "Suburbs", "East Side", "West Side"};
+        String[] namePrefixes = {"Green", "Oak", "River", "Hill", "Sunrise", "Cedar", "Lakeside"};
+        String[] nameSuffixes = {"Academy", "School", "Institute", "High School", "College"};
+
+        for (int i = 0; i < qty; i++) {
+            String type = schoolTypes[rnd.nextInt(schoolTypes.length)];
+            String location = locations[rnd.nextInt(locations.length)];
+            int rating = rnd.nextInt(1, 6);
+            boolean isPublic = "public".equals(type);
+
+            String name = namePrefixes[rnd.nextInt(namePrefixes.length)] + " " + nameSuffixes[rnd.nextInt(nameSuffixes.length)];
+
+            School school = new School(name, type, location, rating, isPublic);
+            schoolRepository.save(school);
+
+            School schoolById = schoolRepository.findById(school.getId()).orElse(null);
+            if (schoolById != null) {
+                qtySchoolsCreated++;
+                System.out.println(
+                        "School #" + qtySchoolsCreated +
+                                "/" + qty + " created populateDB: " + schoolById);
+            }
+        }
+
+        return qtySchoolsCreated;
+    }
 
     public int populateApartments(int qty) {
         int qtyApartmetnsCreated = 0;
@@ -74,6 +117,12 @@ public class PopulateDB {
         return qtyApartmetnsCreated;
     }
 
+   public int assignSchoolsToApartments(List<Apartment> apartments, List<School> schools) {
+       return 0;
+   }
+
+
+
     public int populateReviews(int qty) {
         return 0;
     }
@@ -82,38 +131,11 @@ public class PopulateDB {
         return 0;
     }
 
-    public int populateSchools(int qty) {
-        int qtySchoolsCreated = 0;
-        if (qty <= 0) return 0;
+    public int populateOwners(int qty) {
+        return 0;
+    }
 
-        ThreadLocalRandom rnd = ThreadLocalRandom.current();
-
-        String[] schoolTypes = {"public", "private", "religious"};
-
-        String[] locations = {"Downtown", "Uptown", "Suburbs", "East Side", "West Side"};
-        String[] namePrefixes = {"Green", "Oak", "River", "Hill", "Sunrise", "Cedar", "Lakeside"};
-        String[] nameSuffixes = {"Academy", "School", "Institute", "High School", "College"};
-
-        for (int i = 0; i < qty; i++) {
-            String type = schoolTypes[rnd.nextInt(schoolTypes.length)];
-            String location = locations[rnd.nextInt(locations.length)];
-            int rating = rnd.nextInt(1, 6);
-            boolean isPublic = "public".equals(type);
-
-            String name = namePrefixes[rnd.nextInt(namePrefixes.length)] + " " + nameSuffixes[rnd.nextInt(nameSuffixes.length)];
-
-            School school = new School(name, type, location, rating, isPublic);
-            schoolRepository.save(school);
-
-            School schoolById = schoolRepository.findById(school.getId()).orElse(null);
-            if (schoolById != null) {
-                qtySchoolsCreated++;
-                System.out.println(
-                        "School #" + qtySchoolsCreated +
-                                "/" + qty + " created populateDB: " + schoolById);
-            }
-        }
-
-        return qtySchoolsCreated;
+    public int populatePropertyContracts(int qty) {
+        return 0;
     }
 }
