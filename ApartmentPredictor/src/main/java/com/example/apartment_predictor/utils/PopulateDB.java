@@ -19,9 +19,24 @@ public class PopulateDB {
     @Autowired
     SchoolRepository schoolRepository;
 
-    //todo: all methods MUST return the objects created
+    //todo: REFACTOR > all methods MUST return the objects created
+    //todo: define our pattern, orchestrator
+    //todo: define steps for our orchestrator > populateAll()
 
+    // orchestrator
     public int populateAll(int qty) {
+
+        // 1 populate Apartments > List
+        // 2 populate Schools > List
+        // 3 assignSchoolsToApartments
+        // 4 populate Reviewers > List
+        // 5 populate Reviews (very general description, valid for all apartments) and assign Reviewers
+        // 6 assign Reviews to Apartments
+        // 7 populate Owners
+        // 8 populate PropertyContracts assign Owners and Apartments
+        // 9 check and return qty of created objects
+
+
         return 0;
     }
 
