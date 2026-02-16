@@ -2,6 +2,7 @@ package com.example.apartment_predictor.model;
 
 import java.time.LocalDate;
 
+
 public class Owner {
 
     private  String id;
