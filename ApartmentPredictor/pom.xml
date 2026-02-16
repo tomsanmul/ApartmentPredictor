@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>ApartmentPredictor</artifactId>
+	<artifactId>apartmentpredictordb</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ApartmentPredictor</name>
+	<name>apartmentpredictordb.mv.db</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
