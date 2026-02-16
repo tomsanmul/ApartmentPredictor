@@ -312,7 +312,7 @@ GET http://localhost:8080/api/apartment/getById?id=19a1b4c3-cfc8-4db2-885c-546db
 - The `id` is passed as a query string parameter (`?id=...`).
 - Often used for filtering/search endpoints, but can also be used for “by id” if you prefer.
 
-#### Optional: support *both* styles at once
+##### Optional: support *both* styles at once
 
 You can overload two methods (different mappings) so **both URLs work**:
 
@@ -345,13 +345,36 @@ Calls that will work
   GET http://localhost:8080/api/apartment/getById?id=19a1b4c3-cfc8-4db2-885c-546db0511463
   ```
 
-### Request/response Cycle
+#### POST, PUT & PATCH to update
+
+- [REST-CRUD_updatePUT](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/REST-CRUD_updatePUT.md)
+
+#### Request/response Cycle
 
 - [Spring Boot: cycle – albertprofe wiki](https://albertprofe.dev/springboot/boot-what-cycle.html)
 
+Get operation: GET Cycle: Get all Apartments.
+
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/code-restcontroller.png)
 
-### Postman documentation API REST
+Post operation: POST Cycle: Create New Apartment
+
+This cycle involves sending new data to be persisted in the Database.
+
+**Step-by-Step Breakdown:**
+
+1. **Request:** The user sends a JSON body via Postman to the `/create` endpoint.
+2. **Controller:** Captures the JSON and converts it into an `Apartment` object.
+3. **Service:** Receives the object and triggers the `save()` method.
+4. **Repository:** Executes an `INSERT` SQL command.
+
+Link: 
+
+- [Request/response Cycle](https://github.com/alexpjava/ApartmentPredictorAlpy/blob/main/docs/flow_request_response_cycle_en.md) by Alex P.
+
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/UML-reqres-RESTController.png)
+
+#### Postman documentation API REST
 
 - [apartmentPredictorCRUD](https://documenter.getpostman.com/view/7473960/2sBXVeFs8L)
 
@@ -466,7 +489,7 @@ If you want *some* apartment info inside a review (or you want both directions s
 - **`@JsonIdentityInfo`** (serialize objects by id to avoid loops)
 - **DTOs** (best practice for non-trivial APIs: return `ReviewDto`, `ApartmentDto` instead of entities)
 
-#### Cascade
+##### Cascade
 
 Unrelated to `@JsonIgnore`, but worth flagging: `@JoinColumn` should typically go with `@ManyToOne`, but **`@ManyToOne` generally should not use `cascade = CascadeType.ALL`** (deleting a review could delete its apartment). Usually you only cascade from parent (`Apartment`) to children (`Review`), not the other way around.
 
@@ -565,7 +588,43 @@ Database Dialect and DDL
 
 ### Populate DB
 
-- [ImportCSVtoH2](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/ImportCSVtoH2.md)
+> Spring Boot offers four practical methods to import synthetic data using H2 database.
+
+**data.sql Method**
+
+Place `data.sql` in `src/main/resources`. Spring Boot auto-executes it on startup for embedded databases like H2. Use the Lab#SB09-1 example with UUID() inserts for Books, Speakers, then Conferences linking via subqueries. 
+
+- Set `spring.jpa.defer-datasource-initialization=true` and `spring.sql.init.mode=always` in `application.properties` for non-embedded DBs.[[albertprofe](https://albertprofe.dev/springboot/sblab9-1.html)]​
+
+**CSV Import Method**
+
+Generate CSV files externally, then use H2's `LOAD DATA INFILE` or Spring's `FlatFileItemReader`. 
+
+- Reference the ApartmentPredictor GitHub guide for H2-specific syntax matching your entity columns (id, title, author, etc.). Configure via `application.yml` with `spring.batch` for batch processing.[[albertprofe](https://albertprofe.dev/springboot/sblab9-1.html)]​
+
+**Java Faker Code Method**
+
+Add DataFaker dependency, inject `Faker` bean, and use `@PostConstruct` or `CommandLineRunner` to populate repositories. Generate realistic names, emails, dates, and UUIDs matching your `@Builder` entities: 
+
+- `Conference.builder().title(faker.book().title()).build()`. Ideal for dynamic volumes.[[github](https://github.com/datafaker-net/datafaker)]​
+
+**REST API Method**
+
+Create `@RestController` endpoint `/api/fake-data` returning `List<Conference>`. 
+
+- Use Faker inside to stream synthetic records on-demand. Call via Postman or curl for testing Vaadin views without DB setup. Scales for your Spring I/O lab demos.[[dev](https://dev.to/wallaceespindola/generating-realistic-fake-data-in-java-with-quarkus-datafaker-easyrandom-5gi8)]​
+
+Import data:
+
+- [From data.sql Lab#SB09-1: SpringIO Conference](https://albertprofe.dev/springboot/sblab9-1.html#sql-data-initialization-with-data.sql)   sql-data-initialization-with-data.sql)
+
+- [ImportCSVtoH2 - ApartmentPredictor/docs/appends/SQL-ImportCSVtoH2.md at master](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/SQL-ImportCSVtoH2.md)
+
+Creating it at code:
+
+- [PopulateApartmentsAPI - ApartmentPredictor/docs/appends/JPA-PopulateApartmentsAPI.md at master](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-PopulateApartmentsAPI.md)
+
+- [Java Faker Lab#SB08-3: H2 and API Rest](https://albertprofe.dev/springboot/sblab8-3.html#java-faker)
 
 ## Maven
 
