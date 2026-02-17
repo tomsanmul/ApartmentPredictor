@@ -2,22 +2,43 @@ package com.example.apartment_predictor.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
+@Entity
 public class Owner {
 
-    private  String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
     private int age;
+
     private boolean isActive;
     private boolean isBusiness;
+
     private String idLegalOwner;
+
     private LocalDate registrationDate;
+
     private int qtyDaysAsOwner;
 
-    public Owner(){}
+    // 🔴 OBLIGATORIO para JPA
+    public Owner() {
+    }
 
-    public Owner(String name, String email, int age, boolean isActive, boolean isBusiness, String idLegalOwner, LocalDate registrationDate, int qtyDaysAsOwner) {
+    public Owner(String name, String email, int age, boolean isActive,
+                 boolean isBusiness, String idLegalOwner,
+                 LocalDate registrationDate, int qtyDaysAsOwner) {
         this.name = name;
         this.email = email;
         this.age = age;
@@ -28,12 +49,10 @@ public class Owner {
         this.qtyDaysAsOwner = qtyDaysAsOwner;
     }
 
+    // getters & setters
+
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {

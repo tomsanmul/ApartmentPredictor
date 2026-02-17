@@ -1,15 +1,16 @@
 package com.example.apartment_predictor;
 
-import com.example.apartment_predictor.model.Apartment;
-import com.example.apartment_predictor.model.Review;
-import com.example.apartment_predictor.repository.ApartmentRepository;
-import com.example.apartment_predictor.repository.ReviewRepository;
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.time.LocalDate;
+import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.model.Review;
+import com.example.apartment_predictor.repository.ApartmentRepository;
+import com.example.apartment_predictor.repository.ReviewRepository;
 
 @SpringBootApplication
 public class ApartmentPredictorApplication implements CommandLineRunner {
@@ -115,37 +116,37 @@ public class ApartmentPredictorApplication implements CommandLineRunner {
         Review review1 = new Review();
         //review1.setId(java.util.UUID.randomUUID().toString());
         review1.setTitle("Amazing apartment with great location");
-        review1.setContent("This apartment exceeded my expectations. The location is perfect and the amenities are top-notch. Highly recommended for anyone looking for a comfortable stay.");
+        review1.setComment("This apartment exceeded my expectations. The location is perfect and the amenities are top-notch. Highly recommended for anyone looking for a comfortable stay.");
         review1.setRating(5);
-        review1.setReviewDate(LocalDate.of(2024, 1, 15));
+        review1.setDate(LocalDate.of(2024, 1, 15));
 
         Review review2 = new Review();
         //review2.setId(java.util.UUID.randomUUID().toString());
         review2.setTitle("Good value for money");
-        review2.setContent("Nice apartment overall. Clean and well-maintained. The only downside is the parking situation but everything else was great.");
+        review2.setComment("Nice apartment overall. Clean and well-maintained. The only downside is the parking situation but everything else was great.");
         review2.setRating(4);
-        review2.setReviewDate(LocalDate.of(2024, 2, 3));
+        review2.setDate(LocalDate.of(2024, 2, 3));
 
         Review review3 = new Review();
         //review3.setId(java.util.UUID.randomUUID().toString());
         review3.setTitle("Disappointing experience");
-        review3.setContent("The apartment looked much better in photos. Several issues with plumbing and the heating system didn't work properly during our stay.");
+        review3.setComment("The apartment looked much better in photos. Several issues with plumbing and the heating system didn't work properly during our stay.");
         review3.setRating(2);
-        review3.setReviewDate(LocalDate.of(2024, 2, 18));
+        review3.setDate(LocalDate.of(2024, 2, 18));
 
         Review review4 = new Review();
         //review4.setId(java.util.UUID.randomUUID().toString());
         review4.setTitle("Perfect for families");
-        review4.setContent("Spacious apartment with excellent facilities for children. The playground nearby and safe neighborhood make it ideal for families with kids.");
+        review4.setComment("Spacious apartment with excellent facilities for children. The playground nearby and safe neighborhood make it ideal for families with kids.");
         review4.setRating(5);
-        review4.setReviewDate(LocalDate.of(2024, 3, 5));
+        review4.setDate(LocalDate.of(2024, 3, 5));
 
         Review review5 = new Review();
         //review5.setId(java.util.UUID.randomUUID().toString());
         review5.setTitle("Average stay");
-        review5.setContent("Nothing special but nothing terrible either. Basic amenities and decent location. Would consider staying again if the price is right.");
+        review5.setComment("Nothing special but nothing terrible either. Basic amenities and decent location. Would consider staying again if the price is right.");
         review5.setRating(3);
-        review5.setReviewDate(LocalDate.of(2024, 3, 22));
+        review5.setDate(LocalDate.of(2024, 3, 22));
 
         // Save reviews to database
         reviewRepository.save(review1);

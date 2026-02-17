@@ -1,17 +1,18 @@
 package com.example.apartment_predictor;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import com.example.apartment_predictor.model.Apartment;
 import com.example.apartment_predictor.model.Review;
 import com.example.apartment_predictor.repository.ApartmentRepository;
 import com.example.apartment_predictor.repository.ReviewRepository;
 import com.example.apartment_predictor.utils.PrintingUtils;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
 
 
 @SpringBootTest
@@ -61,10 +62,10 @@ class ApartmentPredictorApplicationTests {
         //utils.printApartmentsByRepoInstance();
 
         Review review1 = new Review();
-        review1.setContent("This apartment exceeded my expectations. The location is perfect and the amenities are top-notch. Highly recommended for anyone looking for a comfortable stay.");
+        review1.setComment("This apartment exceeded my expectations. The location is perfect and the amenities are top-notch. Highly recommended for anyone looking for a comfortable stay.");
         review1.setRating(5);
         review1.setTitle("Nice Apartment in Fifth Avenue");
-        review1.setReviewDate(LocalDate.now());
+        review1.setDate(LocalDate.now());
         review1.setApartment(apartment1);
 
         reviewRepository.save(review1);
@@ -90,10 +91,10 @@ class ApartmentPredictorApplicationTests {
         Review review1 = new Review();
         // after constructor is called
         // id is generated automatically bY UUID
-        review1.setContent("This apartment exceeded my expectations. The location is perfect and the amenities are top-notch. Highly recommended for anyone looking for a comfortable stay.\t");
+        review1.setComment("This apartment exceeded my expectations. The location is perfect and the amenities are top-notch. Highly recommended for anyone looking for a comfortable stay.\t");
         review1.setRating(5);
         review1.setTitle("Nice Apartment in Fifth Avenue");
-        review1.setReviewDate(LocalDate.now());
+        review1.setDate(LocalDate.now());
         // save review object to H2 test local-database
         // JPA repository SAVES it USING the method SAVE from crudRepository
         // reviewRepository uses autowired dependency injection
