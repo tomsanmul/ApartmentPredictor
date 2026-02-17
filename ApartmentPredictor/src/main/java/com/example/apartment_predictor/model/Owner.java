@@ -1,14 +1,12 @@
 package com.example.apartment_predictor.model;
 
+import jakarta.persistence.Entity;
+
 import java.time.LocalDate;
 
-public class Owner {
+@Entity
+public class Owner extends Person {
 
-    private  String id;
-    private String name;
-    private String email;
-    private int age;
-    private boolean isActive;
     private boolean isBusiness;
     private String idLegalOwner;
     private LocalDate registrationDate;
@@ -16,56 +14,14 @@ public class Owner {
 
     public Owner(){}
 
-    public Owner(String name, String email, int age, boolean isActive, boolean isBusiness, String idLegalOwner, LocalDate registrationDate, int qtyDaysAsOwner) {
-        this.name = name;
-        this.email = email;
-        this.age = age;
-        this.isActive = isActive;
+    public Owner(String fullName, String email, String password, LocalDate birthDate, boolean isActive, boolean isBusiness, String idLegalOwner, LocalDate registrationDate, int qtyDaysAsOwner) {
+        super(fullName, email, password, birthDate, isActive);
         this.isBusiness = isBusiness;
         this.idLegalOwner = idLegalOwner;
         this.registrationDate = registrationDate;
         this.qtyDaysAsOwner = qtyDaysAsOwner;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
 
     public boolean isBusiness() {
         return isBusiness;
@@ -102,11 +58,10 @@ public class Owner {
     @Override
     public String toString() {
         return "Owner{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", age=" + age +
-                ", isActive=" + isActive +
+                "id='" + super.getId() + '\'' +
+                ", name='" + super.getFullName() + '\'' +
+                ", email='" + super.getEmail() + '\'' +
+                ", isActive=" + super.isActive() +
                 ", isBusiness=" + isBusiness +
                 ", idLegalOwner='" + idLegalOwner + '\'' +
                 ", registrationDate=" + registrationDate +
