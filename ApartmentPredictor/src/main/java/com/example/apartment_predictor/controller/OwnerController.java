@@ -1,5 +1,6 @@
 package com.example.apartment_predictor.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,8 @@ public class OwnerController {
 
     @GetMapping
     public List<Owner> getAll() {
-        return ownerRepo.findAll();
-    }
+        List<Owner> owners = new ArrayList<>();
+        ownerRepo.findAll().forEach(owners::add);
+    return owners;
+}
 }
