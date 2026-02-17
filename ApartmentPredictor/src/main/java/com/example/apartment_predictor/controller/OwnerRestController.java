@@ -14,16 +14,16 @@ import com.example.apartment_predictor.repository.OwnerRepository;
 @RequestMapping("/api/owners")
 public class OwnerRestController {
 
-    private final OwnerRepository ownerRepo;
+    private final OwnerRepository ownerRepository;
 
-    public OwnerRestController(OwnerRepository ownerRepo) {
-        this.ownerRepo = ownerRepo;
+    public OwnerRestController(OwnerRepository ownerRepository) {
+        this.ownerRepository = ownerRepository;
     }
 
     @GetMapping
     public List<Owner> getAll() {
         List<Owner> owners = new ArrayList<>();
-    ownerRepo.findAll().forEach(owners::add);
+    ownerRepository.findAll().forEach(owners::add);
     return owners;
 }
 }

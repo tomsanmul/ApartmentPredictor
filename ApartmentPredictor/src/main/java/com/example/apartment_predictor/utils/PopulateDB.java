@@ -1,23 +1,34 @@
 package com.example.apartment_predictor.utils;
 
-import com.example.apartment_predictor.model.Apartment;
-import com.example.apartment_predictor.model.School;
-import com.example.apartment_predictor.repository.SchoolRepository;
-import com.example.apartment_predictor.service.ApartmentService;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.model.School;
+import com.example.apartment_predictor.repository.ApartmentRepository;
+import com.example.apartment_predictor.repository.OwnerRepository;
+import com.example.apartment_predictor.repository.PropertyContractRepository;
+import com.example.apartment_predictor.repository.ReviewRepository;
+import com.example.apartment_predictor.repository.ReviewerRepository;
+import com.example.apartment_predictor.repository.SchoolRepository;
+import com.example.apartment_predictor.service.ApartmentService;
 
 @Component
 public class PopulateDB {
 
-    @Autowired
-    ApartmentService apartmentService;
+    @Autowired private ApartmentService apartmentService;
+    @Autowired private SchoolRepository schoolRepository;
 
-    @Autowired
-    SchoolRepository schoolRepository;
+    @Autowired private ApartmentRepository apartmentRepository;
+    @Autowired private OwnerRepository ownerRepository;
+    @Autowired private ReviewerRepository reviewerRepository;
+    @Autowired private ReviewRepository reviewRepository;
+    @Autowired private PropertyContractRepository contractRepository;
+
+    
 
     //todo: REFACTOR > all methods MUST return the objects created
     //todo: define our pattern, orchestrator
@@ -129,13 +140,23 @@ public class PopulateDB {
             }
 
         }
+
+        //TEST PARA BORRAR
+        apartmentRepository.count();    
+        ownerRepository.count();
+        schoolRepository.count();
+        reviewRepository.count();
+        reviewerRepository.count();
+        contractRepository.count();
+        
+
         return qtyApartmetnsCreated;
     }
+
 
    public int assignSchoolsToApartments(List<Apartment> apartments, List<School> schools) {
        return 0;
    }
-
 
 
     public int populateReviews(int qty) {

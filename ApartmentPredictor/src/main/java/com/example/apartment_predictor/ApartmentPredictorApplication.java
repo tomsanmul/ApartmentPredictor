@@ -10,15 +10,26 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.example.apartment_predictor.model.Apartment;
 import com.example.apartment_predictor.model.Review;
 import com.example.apartment_predictor.repository.ApartmentRepository;
+import com.example.apartment_predictor.repository.OwnerRepository;
+import com.example.apartment_predictor.repository.PropertyContractRepository;
 import com.example.apartment_predictor.repository.ReviewRepository;
+import com.example.apartment_predictor.repository.ReviewerRepository;
+import com.example.apartment_predictor.repository.SchoolRepository;
+
+
 
 @SpringBootApplication
 public class ApartmentPredictorApplication implements CommandLineRunner {
 
-    @Autowired
-    private ApartmentRepository apartmentRepository;
-    @Autowired
-    private ReviewRepository reviewRepository;
+    @Autowired private ApartmentRepository apartmentRepository;
+    @Autowired private ReviewRepository reviewRepository;
+
+    
+    @Autowired private OwnerRepository ownerRepository;
+    @Autowired private SchoolRepository schoolRepository;
+    @Autowired private ReviewerRepository reviewerRepository;
+    @Autowired private PropertyContractRepository contractRepository;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(ApartmentPredictorApplication.class, args);
@@ -98,6 +109,14 @@ public class ApartmentPredictorApplication implements CommandLineRunner {
         apartmentRepository.save(apartment1);
         apartmentRepository.save(apartment2);
         apartmentRepository.save(apartment3);
+
+        //TEST
+        ownerRepository.count();
+        schoolRepository.count();
+        reviewRepository.count();
+        reviewerRepository.count();
+        contractRepository.count();
+
 
         int index = 0;
         System.out.println("\n=== Apartments in the Database ===");
