@@ -32,6 +32,7 @@ public class ApartmentService {
        return apartmentRepository.save(apartment);
     }
 
+
     public Apartment updateApartmentById(String id, Apartment apartment) {
         if (id == null || apartment == null) {
             return null;

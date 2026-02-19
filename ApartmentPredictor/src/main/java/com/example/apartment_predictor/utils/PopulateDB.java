@@ -1,14 +1,22 @@
 package com.example.apartment_predictor.utils;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.model.Duplex;
+import com.example.apartment_predictor.model.House;
+import com.example.apartment_predictor.model.Owner;
+import com.example.apartment_predictor.model.PropertyContract;
+import com.example.apartment_predictor.model.Review;
+import com.example.apartment_predictor.model.Reviewer;
 import com.example.apartment_predictor.model.School;
-import com.example.apartment_predictor.repository.ApartmentRepository;
 import com.example.apartment_predictor.repository.OwnerRepository;
 import com.example.apartment_predictor.repository.PropertyContractRepository;
 import com.example.apartment_predictor.repository.ReviewRepository;
@@ -16,162 +24,142 @@ import com.example.apartment_predictor.repository.ReviewerRepository;
 import com.example.apartment_predictor.repository.SchoolRepository;
 import com.example.apartment_predictor.service.ApartmentService;
 
-@Component
-public class PopulateDB {
+@Component public class PopulateDB {
 
-    @Autowired private ApartmentService apartmentService;
-    @Autowired private SchoolRepository schoolRepository;
+    @Autowired ApartmentService apartmentService; @Autowired SchoolRepository schoolRepository; @Autowired ReviewerRepository reviewerRepository; @Autowired ReviewRepository reviewRepository;  @Autowired OwnerRepository ownerRepository;@Autowired PropertyContractRepository contractRepository;
 
-    @Autowired private ApartmentRepository apartmentRepository;
-    @Autowired private OwnerRepository ownerRepository;
-    @Autowired private ReviewerRepository reviewerRepository;
-    @Autowired private ReviewRepository reviewRepository;
-    @Autowired private PropertyContractRepository contractRepository;
-
-    
-
-    //todo: REFACTOR > all methods MUST return the objects created
-    //todo: define our pattern, orchestrator
-    //todo: define steps for our orchestrator > populateAll()
-
-    // orchestrator
+    @Transactional
     public int populateAll(int qty) {
-
-        // 1 populate Apartments > List
-        // 2 populate Schools > List
-        // 3 assignSchoolsToApartments
-        // 4 populate Reviewers > List
-        // 5 populate Reviews (very general description, valid for all apartments) and assign Reviewers
-        // 6 assign Reviews to Apartments
-        // 7 populate Owners
-        // 8 populate PropertyContracts assign Owners and Apartments
-        // 9 check and return qty of created objects
-
-
-        return 0;
+        System.out.println(">>> Iniciando orquestador de población...");
+        List<Apartment> apartments = populatePlainApartments(qty);
+        List<School> schools = populateSchools(qty);
+        assignSchoolsToApartments(apartments, schools);
+        List<Reviewer> reviewers = populateReviewers(Math.max(1, qty / 2));
+        assignReviewsToApartments(apartments, reviewers);
+        List<Owner> owners = populateOwners(Math.max(1, qty / 3));
+        List<PropertyContract> contracts = populatePropertyContracts(apartments, owners);
+        System.out.println(">>> Población finalizada con éxito.");
+        return apartments.size() + contracts.size();
     }
 
-    // populate apartments and schools
+    // --------- APARTMENTS (Including House and Duplex) ------------------------------
 
-    public int populateSchools(int qty) {
-        int qtySchoolsCreated = 0;
-        if (qty <= 0) return 0;
-
+    public List<Apartment> populatePlainApartments(int qty) {
+        List<Apartment> apartments = new ArrayList<>();
         ThreadLocalRandom rnd = ThreadLocalRandom.current();
-
-        String[] schoolTypes = {"public", "private", "religious"};
-        String[] locations = {"Downtown", "Uptown", "Suburbs", "East Side", "West Side"};
-        String[] namePrefixes = {"Green", "Oak", "River", "Hill", "Sunrise", "Cedar", "Lakeside"};
-        String[] nameSuffixes = {"Academy", "School", "Institute", "High School", "College"};
+        String[] furnish = {"furnished", "semi-furnished", "unfurnished"};
 
         for (int i = 0; i < qty; i++) {
-            String type = schoolTypes[rnd.nextInt(schoolTypes.length)];
-            String location = locations[rnd.nextInt(locations.length)];
-            int rating = rnd.nextInt(1, 6);
-            boolean isPublic = "public".equals(type);
+            Apartment apt;
+            int typeChoice = rnd.nextInt(3); 
 
-            String name = namePrefixes[rnd.nextInt(namePrefixes.length)] + " " + nameSuffixes[rnd.nextInt(nameSuffixes.length)];
-
-            School school = new School(name, type, location, rating, isPublic);
-            schoolRepository.save(school);
-
-            School schoolById = schoolRepository.findById(school.getId()).orElse(null);
-            if (schoolById != null) {
-                qtySchoolsCreated++;
-                System.out.println(
-                        "School #" + qtySchoolsCreated +
-                                "/" + qty + " created populateDB: " + schoolById);
+            if (typeChoice == 0) {
+                House h = new House();
+                h.setPropertyType("House");
+                h.setYardSize(rnd.nextInt(50, 300));
+                h.setPool(rnd.nextBoolean() ? "yes" : "no");
+                apt = h;} 
+                
+                else if (typeChoice == 1) {
+                Duplex d = new Duplex();
+                d.setPropertyType("Duplex");
+                d.setBalcony("large");
+                apt = d;} 
+                
+                else {
+                apt = new Apartment();
+                apt.setPropertyType("Apartment");
             }
-        }
 
-        return qtySchoolsCreated;
+            apt.setArea(rnd.nextInt(40, 400));
+            apt.setBedrooms(rnd.nextInt(1, 5));
+            apt.setBathrooms(rnd.nextInt(1, 3));
+            apt.setAirconditioning(rnd.nextBoolean() ? "yes" : "no");
+            apt.setFurnishingstatus(furnish[rnd.nextInt(furnish.length)]);
+            apt.setPrice(0L);
+            Apartment saved = apartmentService.createApartment(apt);
+            apartments.add(saved);
+        }
+        return apartments;
     }
 
-    public int populateApartments(int qty) {
-        int qtyApartmetnsCreated = 0;
-        if (qty <= 0) return 0;
+    // --------- SCHOOLS ------------------------------
 
-        //Faker faker = new Faker(new Locale("en-US"));
+    public List<School> populateSchools(int qty) {
+        List<School> schools = new ArrayList<>();
+        if (qty <= 0) return schools;
         ThreadLocalRandom rnd = ThreadLocalRandom.current();
-
-        String[] furnishingOptions = {"furnished", "semi-furnished", "unfurnished"};
+        String[] types = {"Pública", "Privada", "Concertada"};
+        String[] distances = {"100m", "500m", "1km", "2.5km"};
+        String[] levels = {"Infantil i Primària", "ESO i Batxillerat", "Educació Especial"};
+        String[] names = {"Escola Gravi", "Escola Palcam", "Escola Paideia", "Institut Montnegre"};
 
         for (int i = 0; i < qty; i++) {
-            Long price = rnd.nextLong(30_000, 600_001);          // adjust range if you want
-            Integer area = rnd.nextInt(300, 5001);              // adjust range if you want
-            Integer bedrooms = rnd.nextInt(1, 7);
-            Integer bathrooms = rnd.nextInt(1, 5);
-            Integer stories = rnd.nextInt(1, 5);
-
-            String mainroad = rnd.nextBoolean() ? "yes" : "no";
-            String guestroom = rnd.nextBoolean() ? "yes" : "no";
-            String basement = rnd.nextBoolean() ? "yes" : "no";
-            String hotwaterheating = rnd.nextBoolean() ? "yes" : "no";
-            String airconditioning = rnd.nextBoolean() ? "yes" : "no";
-            Integer parking = rnd.nextInt(0, 4);
-            String prefarea = rnd.nextBoolean() ? "yes" : "no";
-
-            String furnishingstatus = furnishingOptions[rnd.nextInt(furnishingOptions.length)];
-
-            Apartment apartment = new Apartment(
-                    price,
-                    area,
-                    bedrooms,
-                    bathrooms,
-                    stories,
-                    mainroad,
-                    guestroom,
-                    basement,
-                    hotwaterheating,
-                    airconditioning,
-                    parking,
-                    prefarea,
-                    furnishingstatus
-            );
-
-            apartmentService.createApartment(apartment);
-
-            Apartment apartmentById = apartmentService.findApartmentById(apartment.getId());
-            if (apartmentById != null) {
-                qtyApartmetnsCreated++;
-                System.out.println(
-                        "Apartment #" + qtyApartmetnsCreated +
-                         "/" + qty + " created populateDB: " + apartmentById);
-            }
-
+            String name = names[rnd.nextInt(names.length)] + " " + (i + 1);
+            String type = types[rnd.nextInt(types.length)];
+            String dist = distances[rnd.nextInt(distances.length)];
+            String level = levels[rnd.nextInt(levels.length)];
+            String address = "Carrer de l'Exemple, " + rnd.nextInt(1, 500);
+            School school = new School(null, name, type, address, dist);
+            
+            School savedSchool = schoolRepository.save(school);
+            schools.add(savedSchool);
+            System.out.println("✅ Escuela creada: " + savedSchool.getName() + " a " + savedSchool.getDistance());
         }
 
-        //TEST PARA BORRAR
-        apartmentRepository.count();    
-        ownerRepository.count();
-        schoolRepository.count();
-        reviewRepository.count();
-        reviewerRepository.count();
-        contractRepository.count();
+        return schools;
+    }
+
+   public boolean assignSchoolsToApartments(List<Apartment> apartments, List<School> schools) {
+        if (apartments == null || schools == null || schools.isEmpty()) return false;
         
-
-        return qtyApartmetnsCreated;
+        for (Apartment apt : apartments) {
+            apt.addSchool(schools.get(ThreadLocalRandom.current().nextInt(schools.size())));
+            apartmentService.updateApartment(apt); 
+        }
+        return true;
     }
 
+    // --------- REVIEWS & REVIEWERS ------------------------------
 
-   public int assignSchoolsToApartments(List<Apartment> apartments, List<School> schools) {
-       return 0;
-   }
-
-
-    public int populateReviews(int qty) {
-        return 0;
+    public List<Reviewer> populateReviewers(int qty) {
+        List<Reviewer> list = new ArrayList<>();
+        for (int i = 0; i < qty; i++) {
+            Reviewer r = new Reviewer("Reviewer " + i, "rev" + i + "@test.com", "Expert", 5);
+            list.add(reviewerRepository.save(r));
+        }
+        return list;
     }
 
-    public int populateReviewers(int qty) {
-        return 0;
+    public void assignReviewsToApartments(List<Apartment> apartments, List<Reviewer> reviewers) {
+        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+        for (Apartment apt : apartments) {
+            Review rev = new Review("Great Property", "Very good conditions", 5, LocalDate.now());
+            rev.setApartment(apt);
+            rev.setReviewer(reviewers.get(rnd.nextInt(reviewers.size())));
+            reviewRepository.save(rev);
+        }
     }
 
-    public int populateOwners(int qty) {
-        return 0;
+    // --------- OWNERS & CONTRACTS ------------------------------
+
+    public List<Owner> populateOwners(int qty) {
+        List<Owner> list = new ArrayList<>();
+        for (int i = 0; i < qty; i++) {
+            Owner o = new Owner("Owner " + i, "owner" + i + "@mail.com", 35, true, false, "DNI" + i, LocalDate.now(), 100);
+            list.add(ownerRepository.save(o));
+        }
+        return list;
     }
 
-    public int populatePropertyContracts(int qty) {
-        return 0;
+    public List<PropertyContract> populatePropertyContracts(List<Apartment> apartments, List<Owner> owners) {
+        List<PropertyContract> contracts = new ArrayList<>();
+        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+        for (Apartment apt : apartments) {
+            Owner selectedOwner = owners.get(rnd.nextInt(owners.size()));
+            PropertyContract pc = new PropertyContract(selectedOwner, apt, "Contract-" + apt.getId(), LocalDate.now(), apt.getPrice().doubleValue());
+            contracts.add(contractRepository.save(pc));
+        }
+        return contracts;
     }
 }

@@ -268,3 +268,9 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/Alumne_
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 62 more
+2026-02-19 13:21:07.986218+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "'87ffb224-a053-4c3d-b593-cab8cf2f457e' (APARTMENT_SCHOOL_JOIN_TABLE_COPY_3_2: ""SCHOOL_ID"" BIGINT NOT NULL)"; SQL statement:
+INSERT INTO "PUBLIC"."APARTMENT_SCHOOL_JOIN_TABLE_COPY_3_2"("APARTMENT_ID", "SCHOOL_ID") OVERRIDING SYSTEM VALUE SELECT "APARTMENT_ID", "SCHOOL_ID" FROM "PUBLIC"."APARTMENT_SCHOOL_JOIN_TABLE" [22018-224]
+2026-02-19 13:21:08.017302+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "'87ffb224-a053-4c3d-b593-cab8cf2f457e' (SCHOOL_COPY_3_3: ""ID"" BIGINT NOT NULL)"; SQL statement:
+INSERT INTO "PUBLIC"."SCHOOL_COPY_3_3"("ID", "IS_PUBLIC", "LOCATION", "NAME", "RATING", "TYPE") OVERRIDING SYSTEM VALUE SELECT "ID", "IS_PUBLIC", "LOCATION", "NAME", "RATING", "TYPE" FROM "PUBLIC"."SCHOOL" [22018-224]

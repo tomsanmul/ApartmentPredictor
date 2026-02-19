@@ -1,15 +1,24 @@
 package com.example.apartment_predictor.model;
 
-import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Apartment {
 
     @Id
     protected String id;
+    private String propertyType;
     private Long price;
     protected Integer area;
     protected Integer bedrooms;
@@ -44,8 +53,9 @@ public class Apartment {
     public Apartment(Long price, Integer area, Integer bedrooms, Integer bathrooms, 
                     Integer stories, String mainroad, String guestroom, String basement,
                     String hotwaterheating, String airconditioning,
-                    Integer parking, String prefarea, String furnishingstatus) {
+                    Integer parking, String prefarea, String furnishingstatus, String propertyType) {
         this.id = UUID.randomUUID().toString();
+        this.propertyType = propertyType;
         this.price = price;
         this.area = area;
         this.bedrooms = bedrooms;
@@ -236,5 +246,13 @@ public class Apartment {
                 ", furnishingstatus='" + furnishingstatus + '\'' +
                 ", reviews='" + reviews.size() + '\'' +
                 '}';
+    }
+
+    public String getPropertyType() {
+        return propertyType;
+    }
+
+    public void setPropertyType(String propertyType) {
+        this.propertyType = propertyType;
     }
 }

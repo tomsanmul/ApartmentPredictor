@@ -9,7 +9,6 @@ import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,24 +24,24 @@ import com.example.apartment_predictor.repository.SchoolRepository;
 import com.example.apartment_predictor.service.ApartmentService;
 import com.example.apartment_predictor.utils.PopulateDB;
 
-
 @RestController
 @RequestMapping("api/apartment")
-@CrossOrigin(origins = "http://localhost:5173/")
 public class ApartmentRestController {
 
-@Autowired
-private ApartmentService apartmentService;
+    @Autowired
+    ApartmentService apartmentService;
 
-@Autowired
-PopulateDB populateDB;
+    @Autowired
+    PopulateDB populateDB;
 
-@Autowired
-SchoolRepository schoolRepository;
+    @Autowired
+    SchoolRepository schoolRepository;
 
-@GetMapping("/getAll")
+
+
+    @GetMapping("/getAll")
+    
     public ResponseEntity<Iterable<Apartment>> getAllApartments(){
-
        HttpHeaders headers = new HttpHeaders();
         headers.add("Status", "getAllApartments executed");
         headers.add("version", "1.0 Api Rest Apartment Object");
@@ -50,9 +49,11 @@ SchoolRepository schoolRepository;
         headers.add("author", "Albert");
 
         return ResponseEntity.ok().headers(headers).body(apartmentService.findAll());
+        
         //return apartmentService.findAll();
     }
 
+    
     @GetMapping("/getById")
     public Apartment getApartmentById(@RequestParam String id){
         return apartmentService.findApartmentById(id);
@@ -62,12 +63,6 @@ SchoolRepository schoolRepository;
     public Apartment createApartment(@RequestBody Apartment apartment){
         //apartment.setId(UUID.randomUUID().toString());
         return apartmentService.createApartment(apartment);
-    }
-
-    @PostMapping("/create_apartments")
-        public String createRandomApartments(@RequestParam Integer quantity) {
-        apartmentService.createRandomApartments(quantity);
-        return (quantity + " apartments created!");
     }
 
     @PostMapping("/update")
@@ -89,7 +84,7 @@ SchoolRepository schoolRepository;
     public ResponseEntity<String> populateApartments(@RequestParam int qty) {
         // CALL to PopulateDB.populateApartments() method
         // to populate the database with random apartments
-        int qtyApartmentsCreated = populateDB.populateApartments(qty);
+        int qtyApartmentsCreated = populateDB.populatePlainApartments(qty).size();
         if (qtyApartmentsCreated > 0)
             return ResponseEntity.ok("Populated apartments: " + qtyApartmentsCreated);
         else
@@ -138,5 +133,5 @@ SchoolRepository schoolRepository;
         return ResponseEntity.ok().headers(headers).body(apartmentSaved);
     }
     
-}
 
+}

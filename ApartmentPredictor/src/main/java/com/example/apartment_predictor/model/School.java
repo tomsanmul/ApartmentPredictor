@@ -1,7 +1,4 @@
 package com.example.apartment_predictor.model;
-
-import java.util.UUID;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -9,36 +6,37 @@ import jakarta.persistence.Id;
 public class School {
 
     @Id
-    private String id;
+    private Long id;
     private String name;
     private String type;
     private String location;
+    private String distance;
+    private String educationlevel;
     private int rating;
     private boolean isPublic;
 
     // Default constructor
     public School() {
-        this.id = UUID.randomUUID().toString();
     }
 
-    public School(String name, String type, String location, int rating, boolean isPublic) {
-        this.id = UUID.randomUUID().toString();
+    public School(Long id, String name, String type, String location, String distance) {
+        this.id = id;
         this.name = name;
         this.type = type;
         this.location = location;
-        this.rating = rating;
-        this.isPublic = isPublic;
+        this.distance = distance;
+        this.isPublic = true;
     }
 
     //@ManyToMany
     //private List<Apartment> apartments = new ArrayList<>();
 
     //getters and setters and toString
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -85,6 +83,22 @@ public class School {
     @Override
     public String toString() {
         return "School [id=" + id + ", name=" + name + ", type=" + type + ", location=" + location + ", rating=" + rating + ", isPublic=" + isPublic + "]";
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
+    public String getEducationlevel() {
+        return educationlevel;
+    }
+
+    public void setEducationlevel(String educationlevel) {
+        this.educationlevel = educationlevel;
     }
 
 

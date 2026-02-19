@@ -60,6 +60,7 @@ public class ApartmentPredictorApplication implements CommandLineRunner {
                 2,            // parking
                 "yes",        // prefarea
                 "furnished"   // furnishingstatus
+, null
         );
 
         // Create additional sample apartments
@@ -77,6 +78,7 @@ public class ApartmentPredictorApplication implements CommandLineRunner {
                 1,            // parking
                 "no",         // prefarea
                 "semi-furnished" // furnishingstatus
+, null
         );
 
         Apartment apartment3 = new Apartment(
@@ -93,6 +95,7 @@ public class ApartmentPredictorApplication implements CommandLineRunner {
                 0,            // parking
                 "yes",        // prefarea
                 "unfurnished" // furnishingstatus
+, null
         );
 
         // Display the created apartments

@@ -7,16 +7,22 @@ public class House extends Apartment {
     private int garageQty;
     private String roofType;
     private String garden;
+    private int yardSize;
+    private String pool;
+    
 
     public House() {
         this.id = UUID.randomUUID().toString();
     }
 
-    public House(int garageQty, String roofType, String garden) {
+    public House(int garageQty, String roofType, String garden, int yardSize, String pool, String PropertyType ) {
         this.id = UUID.randomUUID().toString();
         this.garageQty = garageQty;
         this.roofType = roofType;
         this.garden = garden;
+        this.yardSize = yardSize;
+        this.pool = pool;
+
     }
 
     @Override
@@ -51,6 +57,26 @@ public class House extends Apartment {
     public void setGarden(String garden) {
         this.garden = garden;
     }
+
+
+    public int getYardSize() {
+        return yardSize;
+    }
+
+    public void setYardSize(int yardSize) {
+        this.yardSize = yardSize;
+    }
+
+    public String getPool() {
+        return pool;
+    }
+
+    public void setPool(String pool) {
+        this.pool = pool;
+    }
+
+    
+
 
     @Override
     public String toString() {
