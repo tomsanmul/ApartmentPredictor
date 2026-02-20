@@ -33,10 +33,10 @@ public class PopulateDBControllerMARC {
     public String runPopulate() {
         try {
 
-            //No puc convertir Iterable en LIST    
+            //ERROR No puc convertir Iterable en LIST    
             //List<Apartment> apartments = apartmentService.findAll();
             
-            //PARCHE PER CONVERTIR EL ITERABLE en LIST NO RECOMENDABLE, NOMÉS PER SORTIR DEL PAS!! AIXÒ S'HA DE CANVIAR
+            //PARCHE PER CONVERTIR EL ITERABLE en LIST NO RECOMENDABLE, NOMÉS PER SORTIR DEL PAS!! AIXÒ S'HA DE CANVIAR by CHATGPT
             List<Apartment> apartments = StreamSupport.stream(apartmentService.findAll().spliterator(), false).toList();
            
 
