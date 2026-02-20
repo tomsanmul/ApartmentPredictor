@@ -33,7 +33,7 @@ public class PopulateDB {
         // 1 populate Apartments > List
         List<Apartment> plainApartments = populatePlainApartments(qty);
         // 2 populate Schools > List
-        List<School> schools = populateSchools(qty);
+        List<School> schools = populatePlainSchools(qty);
         // 3 assignSchoolsToApartments
         boolean status = assignSchoolsToApartments(plainApartments, schools);
 
@@ -59,7 +59,7 @@ public class PopulateDB {
 
     // --------- POPULATE apartments and schools ------------------------------
 
-    public List<School> populateSchools(int qty) {
+    public List<School> populatePlainSchools(int qty) {
         int qtySchoolsCreated = 0;
         List<School> schools = new ArrayList<>();
         if (qty <= 0) return null;

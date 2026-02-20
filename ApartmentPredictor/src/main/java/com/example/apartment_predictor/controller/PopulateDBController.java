@@ -38,13 +38,20 @@ public class PopulateDBController {
    
     @GetMapping("/populateApartments")
     public ResponseEntity<String> populateApartments(@RequestParam int qty) {
-        // CALL to PopulateDB.populateApartments() method
-        // to populate the database with random apartments
         int qtyApartmentsCreated = populateDB.populatePlainApartments(qty).size();
         if (qtyApartmentsCreated > 0)
             return ResponseEntity.ok("Populated apartments: " + qtyApartmentsCreated);
         else
             return ResponseEntity.badRequest().body("Failed to populate apartments");
+    }
+
+     @GetMapping("/populateSchools")
+    public ResponseEntity<String> populateSchools(@RequestParam int qty) {
+        int qtySchoolsCreated = populateDB.populatePlainSchools(qty).size();
+        if (qtySchoolsCreated > 0)
+            return ResponseEntity.ok("Populated schools: " + qtySchoolsCreated);
+        else
+            return ResponseEntity.badRequest().body("Failed to populate schools");
     }
 
     @PutMapping("/assignSchoolsToApartment")

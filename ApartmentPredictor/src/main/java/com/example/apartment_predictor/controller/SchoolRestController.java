@@ -21,7 +21,7 @@ public class SchoolRestController {
 
     @GetMapping("/populate")
     public ResponseEntity<String> populateSchools(@RequestParam int qty) {
-        List<School> schools = populateDB.populateSchools(qty);
+        List<School> schools = populateDB.populatePlainSchools(qty);
         if (schools.size() > 0)
             return ResponseEntity.ok("Populated schools: " + schools.size());
         else

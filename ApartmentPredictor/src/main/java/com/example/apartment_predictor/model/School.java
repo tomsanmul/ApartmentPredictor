@@ -1,4 +1,6 @@
 package com.example.apartment_predictor.model;
+import java.util.UUID;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -29,6 +31,7 @@ public class School {
     }
 
     public School(String name, String type, String location, int rating, boolean isPublic) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.type = type;
         this.location = location;
