@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 public class School {
 
     @Id
-    private Long id;
+    private String id;
     private String name;
     private String type;
     private String location;
@@ -19,7 +19,7 @@ public class School {
     public School() {
     }
 
-    public School(Long id, String name, String type, String location, String distance) {
+    public School(String id, String name, String type, String location, String distance) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -32,11 +32,11 @@ public class School {
     //private List<Apartment> apartments = new ArrayList<>();
 
     //getters and setters and toString
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
