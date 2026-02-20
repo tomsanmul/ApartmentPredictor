@@ -1,8 +1,5 @@
 package com.example.apartment_predictor.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +8,8 @@ import org.springframework.stereotype.Service;
 import com.example.apartment_predictor.model.Apartment;
 import com.example.apartment_predictor.model.Review;
 import com.example.apartment_predictor.repository.ApartmentRepository;
-import com.github.javafaker.Faker;
+//import com.github.javafaker.Faker;
+
 
 @Service
 public class ApartmentService {
@@ -85,6 +83,7 @@ public class ApartmentService {
     public void findApartmentByPrice (){}
 
 
+ /*   
     public void createRandomApartments(Integer quantity) {
 
     Faker faker = new Faker(Locale.forLanguageTag("es"));
@@ -121,6 +120,7 @@ public class ApartmentService {
     apartmentRepository.saveAll(apartments);
 }
 
+    */
 
 
 

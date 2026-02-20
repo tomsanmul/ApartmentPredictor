@@ -28,6 +28,14 @@ public class School {
         this.isPublic = true;
     }
 
+    public School(String name, String type, String location, int rating, boolean isPublic) {
+        this.name = name;
+        this.type = type;
+        this.location = location;
+        this.rating = rating;
+        this.isPublic = isPublic;
+    }
+
     //@ManyToMany
     //private List<Apartment> apartments = new ArrayList<>();
 
