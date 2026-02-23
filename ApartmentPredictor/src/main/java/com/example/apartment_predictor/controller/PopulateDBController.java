@@ -105,5 +105,23 @@ public class PopulateDBController {
         Apartment apartmentSaved = apartmentService.updateApartment(apartment);
         return ResponseEntity.ok().headers(headers).body(apartmentSaved);
     }
-    
+
+    @GetMapping("/populatePlainReviews")
+    public ResponseEntity<String> populatePlainReviews(@RequestParam int qty) {
+        int qtyReviewsCreated = populateDB.createPlainReviews(qty).size();
+        if (qtyReviewsCreated > 0)
+            return ResponseEntity.ok("Populated Reviews: " + qtyReviewsCreated);
+        else
+            return ResponseEntity.badRequest().body("Failed to populate Reviews");
+    }
+
+    @GetMapping("/populateReviewers")
+    public ResponseEntity<String> populateReviewers(@RequestParam int qty) {
+        int qtyReviewersCreated = populateDB.populateReviewers(qty).size();
+        if (qtyReviewersCreated > 0)
+            return ResponseEntity.ok("Populated Reviewers: " + qtyReviewersCreated);
+        else
+            return ResponseEntity.badRequest().body("Failed to populate Reviewers");
+    }
 }
+

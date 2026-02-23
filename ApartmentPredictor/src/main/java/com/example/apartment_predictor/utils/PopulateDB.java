@@ -1,17 +1,23 @@
 package com.example.apartment_predictor.utils;
 
-import com.example.apartment_predictor.model.*;
-import com.example.apartment_predictor.repository.ReviewRepository;
-import com.example.apartment_predictor.repository.ReviewerRepository;
-import com.example.apartment_predictor.repository.SchoolRepository;
-import com.example.apartment_predictor.service.ApartmentService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.model.Owner;
+import com.example.apartment_predictor.model.PropertyContract;
+import com.example.apartment_predictor.model.Review;
+import com.example.apartment_predictor.model.Reviewer;
+import com.example.apartment_predictor.model.School;
+import com.example.apartment_predictor.repository.ReviewRepository;
+import com.example.apartment_predictor.repository.ReviewerRepository;
+import com.example.apartment_predictor.repository.SchoolRepository;
+import com.example.apartment_predictor.service.ApartmentService;
 
 @Component
 public class PopulateDB {
@@ -45,21 +51,21 @@ public class PopulateDB {
         List<Reviewer> reviewers = populateReviewers(qty);
         // 5 create Reviews (very general description, valid for all apartments) and assign Reviewers
         // DO NOT SAVE to db!
-        List<Review> plainReviews = createPlainReviews(qty);
+        //List<Review> plainReviews = createPlainReviews(qty);
         // 6 assign Reviewers to Reviews
-        List<Review> reviews = assignReviewersToReviews(reviewers, plainReviews);
+        //List<Review> reviews = assignReviewersToReviews(reviewers, plainReviews);
         // 7 assign Reviews to Apartments
-        List<Apartment> plainApartmentsWithSchoolsAndReviews = assignReviewsToApartments(reviews, plainApartmentsWithSchools);
+        //List<Apartment> plainApartmentsWithSchoolsAndReviews = assignReviewsToApartments(reviews, plainApartmentsWithSchools);
 
 
         // 8 populate Owners
-        List<Owner> owners = populateOwners(qty);
+        //List<Owner> owners = populateOwners(qty);
         // 9 populate PropertyContracts assign Owners and Apartments
-        List<PropertyContract> propertyContracts = populatePropertyContracts(qty);
+        //List<PropertyContract> propertyContracts = populatePropertyContracts(qty);
         // 10 check and return qty of created objects
 
 
-        return 0;
+        return qty;
     }
 
     // --------- POPULATE apartments and schools ------------------------------
