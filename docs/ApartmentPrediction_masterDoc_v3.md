@@ -56,35 +56,44 @@ From source:
 ### Project structure
 
 ```textile
-[Tue Feb 10 11:04:35] albert@albert-VirtualBox:~/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor (master)
+[Sat Feb 21 09:13:33] albert@albert-VirtualBox:~/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor (master)
 $ tree
 .
 ├── ApartmentPredictorApplication.java
 ├── controller
-│   ├── ApartmentRestController.java
-│   └── SchoolRestController.java
+│   ├── ApartmentRestController.java
+│   ├── OwnerRestController.java
+│   ├── PopulateDBController.java
+│   ├── PropiertyContractRestController.java
+│   ├── ReviewerRestController.java
+│   ├── ReviewRestController.java
+│   └── SchoolRestController.java
 ├── model
-│   ├── Apartment.java
-│   ├── Duplex.java
-│   ├── House.java
-│   ├── Owner.java
-│   ├── Reviewer.java
-│   ├── Review.java
-│   └── School.java
+│   ├── Apartment.java
+│   ├── Duplex.java
+│   ├── House.java
+│   ├── Owner.java
+│   ├── Person.java
+│   ├── PropertyContract.java
+│   ├── Reviewer.java
+│   ├── Review.java
+│   └── School.java
 ├── repository
-│   ├── ApartmentRepository.java
-│   ├── ReviewRepository.java
-│   └── SchoolRepository.java
+│   ├── ApartmentRepository.java
+│   ├── OwnerRepository.java
+│   ├── PropertyContractRepository.java
+│   ├── ReviewerRepository.java
+│   ├── ReviewRepository.java
+│   └── SchoolRepository.java
 ├── service
-│   ├── ApartmentService.java
-│   └── ReviewService.java
+│   ├── ApartmentService.java
+│   └── ReviewService.java
 └── utils
+    ├── DatabaseVerifier.java
     ├── PopulateDB.java
     └── PrintingUtils.java
 
-6 directories, 17 files
-
-
+6 directories, 28 files
 ```
 
 ## Data Model
@@ -118,7 +127,7 @@ public class Apartment {
 }
 
 public class School {
-    
+
     private String id;
     private String name;
     private String type;
@@ -132,7 +141,7 @@ public class PropiertyContract {
      private String date;
      private String registerNumberPropiertyContract;
      private long valueRealState;  
-    
+
 }
 ```
 
@@ -195,6 +204,87 @@ todo
 ## Postman documentation API REST
 
 - [apartmentPredictorCRUD](https://documenter.getpostman.com/view/7473960/2sBXVeFs8L)
+
+## Inherence
+
+> The project uses a clean **single-table-per-class** inheritance strategy in JPA to model different types of people involved in the apartment review/ownership system.
+
+Core Structure
+
+```text
+               Person
+                 ↑
+      ┌──────────┴──────────┐
+      │                     │
+   Reviewer              Owner
+```
+
+- **Person** is the **abstract base entity** (even though not marked abstract — it can still be used as base)
+- **Owner** and **Reviewer** are concrete subclasses that extend **Person**
+
+### JPA Configuration
+
+```java
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public class Person { ... }
+```
+
+```java
+@Entity
+public class Owner extends Person { ... }
+
+@Entity
+public class Reviewer extends Person { ... }
+```
+
+### Key Characteristics of `TABLE_PER_CLASS`
+
+| Aspect               | Behavior in this setup                                  | Pros                                           | Cons (important to know)                                 |
+| -------------------- | ------------------------------------------------------- | ---------------------------------------------- | -------------------------------------------------------- |
+| Tables created       | Separate table for **Person**, **Owner**, **Reviewer**  | Clear separation, easy to query specific types | Duplicate columns (fullName, email, etc.) in every table |
+| Columns              | All Person fields duplicated in Owner & Reviewer tables | No join needed to read a concrete type         | Wasted space if many common fields                       |
+| Queries              | `SELECT * FROM Owner` → directly readable               | Simple for concrete-class queries              | Polymorphic queries (`Person p`) require UNION           |
+| ID generation        | Each table has its own `id` column (UUID)               | No shared sequence issues                      | Cannot easily do `SELECT * FROM Person`                  |
+| Polymorphism support | Limited — works, but slow (UNION under the hood)        | —                                              | Performance hit on polymorphic queries                   |
+
+**Shared Fields (from Person)**
+
+Every `Owner` and `Reviewer` row contains:
+
+- `id` (UUID)
+- `fullName`
+- `email`
+- `password` (⚠️ plain text — security concern in real app!)
+- `birthDate`
+- `isActive`
+
+**Specific Fields**
+
+| Entity   | Extra fields                                               | Business meaning                                                                    |
+| -------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Owner    | isBusiness, idLegalOwner, registrationDate, qtyDaysAsOwner | Company vs individual, legal ID, tenure tracking                                    |
+| Reviewer | isBusiness, xAccount, webURL, qtyReviews                   | Professional reviewer? Just ocasional one?, Twitter/X handle, website, review count |
+
+### Quick Summary
+
+The model uses **InheritanceType.TABLE_PER_CLASS** to give **Owner** and **Reviewer** their own independent tables while inheriting common person attributes (`fullName`, `email`, `password`, `birthDate`, `isActive`) from the **Person** base class.
+
+This is a good choice when:
+
+- We rarely query across all persons polymorphically
+- We want clean separation between owner and reviewer records
+- We don't mind some column duplication
+
+### Most common production alternatives
+
+| Strategy            | When to prefer over TABLE_PER_CLASS                                               |
+| ------------------- | --------------------------------------------------------------------------------- |
+| **SINGLE_TABLE**    | High polymorphism, many shared queries, want best performance                     |
+| **JOINED**          | Cleanest design, good normalization, still supports polymorphism                  |
+| **TABLE_PER_CLASS** | You mostly work with concrete types, want simple table structure (current choice) |
+
+> If this application grows (e.g. adding Admin, Tenant, Agent roles), **JOINED** or **SINGLE_TABLE** usually becomes more maintainable.
 
 ## JPA
 
@@ -337,15 +427,249 @@ Notes about `cascade = CascadeType.ALL`
 
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/schoolsAssignToApartment-Flow/school-db.png)
 
-
-
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/schoolsAssignToApartment-Flow/apartment-schools-db.png)
-
-
 
 ![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/diagrams/schoolsAssignToApartment-Flow/apartment-db.png)
 
+### One-to-Many Apartment, Review and Reviewer
 
+Explanation of the **relationships** between **Apartment**, **Review**, and **Reviewer** in our current domain model.
+
+| Entity    | Side                 | Relationship Type      | Mapped By / Join Column              | Cascade | Fetch   | Meaning / Business Rule                                   |
+| --------- | -------------------- | ---------------------- | ------------------------------------ | ------- | ------- | --------------------------------------------------------- |
+| Apartment | owning side (parent) | **@OneToMany**         | `mappedBy = "apartment"`             | `ALL`   | `EAGER` | One apartment can have **many reviews**                   |
+| Review    | inverse side (child) | **@ManyToOne**         | `@JoinColumn(name = "apartment_fk")` | `ALL`   | `EAGER` | Every review **belongs to exactly one** apartment         |
+| Review    | inverse side (child) | **@ManyToOne**         | `@JoinColumn(name = "reviewer_fk")`  | `ALL`   | `EAGER` | Every review **was written by exactly one** reviewer      |
+| Reviewer  | owning side (parent) | **implicit OneToMany** | (no collection in Reviewer)          | —       | —       | One reviewer can write **many reviews** (but no List<Revi |
+
+```
+Reviewer  1 ────★ n  Review n  ★───── 1  Apartment
+   │                   │
+   │ writes a Review   │ belongs to Reviewer
+   └───────────────────┘
+```
+
+- **One reviewer** → can write **many reviews**
+
+- **One review** → is written by **exactly one reviewer**
+
+- **One review** → belongs to **exactly one apartment**
+
+- **One apartment** → can have **many reviews**
+
+This is a classic **many-to-one / one-to-many bidirectional** pattern from the **Review** perspective, plus a **one-to-many unidirectional** link from **Apartment → Reviews**.
+
+#### Important observations
+
+1. **Bidirectional Apartment ↔ Review**  
+   
+   - Apartment owns the relationship (`@OneToMany(mappedBy = "apartment")`)
+   
+   - Review has the foreign key (`@ManyToOne` + `@JoinColumn`)
+   
+   - We have helper methods in Apartment:
+     
+     ```java
+     public void addReview(Review review) {
+         reviews.add(review);
+         review.setApartment(this);
+     }
+     ```
+
+2. **Unidirectional Reviewer → Review**  
+   
+   - Reviewer **does not** have a `List<Review> reviews` collection  
+   
+   - Therefore the relationship is **unidirectional** from Review → Reviewer  
+   
+   - We **can** still query all reviews of a reviewer via JPQL / Spring Data:
+     
+     ```java
+     SELECT r FROM Review r WHERE r.reviewer.id = :reviewerId
+     ```
+
+3. **Cascade = ALL everywhere**  
+   
+   - Very aggressive → saving / deleting an Apartment will also save / delete all its Reviews  
+   - Saving a Review will also cascade to its Reviewer and Apartment (risky in many cases)  
+   - **Recommendation for production**: usually use `CascadeType.PERSIST,MERGE` or even just `PERSIST` on `@ManyToOne` sides, and be more careful with `REMOVE`.
+
+4. **Fetch = EAGER on almost everything**  
+   
+   - Every time you load an Apartment → all Reviews + all Reviewers + all Schools are loaded  
+   - Every time you load a Review → its Apartment + its Reviewer are loaded  
+     → Can cause **severe performance problems** (N+1 → huge joins or many selects)  
+   - **Strong recommendation**: change almost all to `FetchType.LAZY` and use `@EntityGraph`, `JOIN FETCH` or Spring Data projections when you really need the data.
+
+### Many-to-Many Apartment and Owner: bridge entity
+
+In real estate / property management systems, the relationship between **owners** and **apartments** is usually **many-to-many** with additional contract data:
+
+- One **Owner** can own **multiple apartments** (over time or simultaneously)
+- One **Apartment** can have **multiple owners** (co-ownership, historical owners, changing ownership)
+- The link carries extra information → contract date, value, document URL, active status, type → therefore **cannot** use plain `@ManyToMany` + `@JoinTable` (no extra columns possible)
+
+**Standard JPA solution** = treat `PropertyContract` as an **associative / bridge / join entity** and model it with **two @ManyToOne** relationships:
+
+```text
+Owner           1 ──────── n   PropertyContract   n ──────── 1   Apartment
+   │                                 │
+   │ owns via contract               │ covers / belongs to
+   └─────────────────────────────────┘
+```
+
+This turns the logical **M:N** into two **1:N** relationships:
+
+- **Owner → PropertyContract** : **@OneToMany** (one owner can have many contracts)
+- **PropertyContract → Owner** : **@ManyToOne** (each contract has exactly one current/legal owner)
+- **Apartment → PropertyContract** : **@OneToMany** (one apartment can be covered by many historical/current contracts)
+- **PropertyContract → Apartment** : **@ManyToOne** (each contract concerns exactly one apartment)
+
+`PropertyContract` <mark>annotations</mark> as **bridge entity** (and owner side), and `Owner`, `Apartment` as inverse side:
+
+```java
+@Entity
+public class PropertyContract {
+
+    @Id
+    private String id = UUID.randomUUID().toString();
+
+    // ... existing fields ...
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private Owner owner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "apartment_id")
+    private Apartment apartment;
+
+    // optional: helper constructors / methods
+}
+```
+
+```java
+@Entity
+public class Owner extends Person {
+
+    // ... existing fields ...
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PropertyContract> contracts = new ArrayList<>();
+
+    // helper
+    public void addContract(PropertyContract contract) {
+        contracts.add(contract);
+        contract.setOwner(this);
+    }
+}
+```
+
+```java
+@Entity
+public class Apartment {
+
+    // ... existing fields ...
+
+    @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PropertyContract> contracts = new ArrayList<>();
+
+    // helper
+    public void addContract(PropertyContract contract) {
+        contracts.add(contract);
+        contract.setApartment(this);
+    }
+}
+```
+
+**Apartment ↔ Owner** is modeled as a **many-to-many** relationship **via the bridge entity PropertyContract**, which acts as an associative entity carrying contract-specific attributes (date, value, document, etc.).
+
+- Each `PropertyContract` links **exactly one Owner** to **exactly one Apartment**
+- This allows historical ownership, co-ownership, contract renewals, etc.
+- Use **@OneToMany** on Owner and Apartment sides (bidirectional)
+- Use **@ManyToOne** on PropertyContract (owning side of the foreign keys)
+
+Summary table
+
+| Aspect                                     | Bridge entity                                    |
+| ------------------------------------------ | ------------------------------------------------ |
+| Relationship type                          | Many-to-many via join entity, `PropertyContract` |
+| Extra fields on link                       | Yes – stored in `PropertyContract`               |
+| JPA annotations needed                     | @OneToMany + @ManyToOne ×2                       |
+| Can query "all contracts of owner"         | Yes – `owner.getContracts()`                     |
+| Can query "ownership history of apartment" | Yes – `apartment.getContracts()`                 |
+| Cascade / orphanRemoval                    | Recommended on @OneToMany sides                  |
+
+> This is the **standard, most flexible** way to handle many-to-many relationships that need additional attributes in JPA/Hibernate/Spring Data.
+
+## Orchestrator: Populate All
+
+> The `PopulateDB` class follows a **step-by-step orchestrator pattern** inside the central method `populateAll(int qty)`.
+
+The current implementation structures data population in a clear, <mark>sequential pipeline</mark>:
+
+1. Create base entities without relationships  
+   → `populatePlainApartments(qty)`  
+   → `populateSchools(qty)`
+   → `populateOwners(qty)`
+
+2. Create relationships / assign child entities  
+   → `assignSchoolsToApartments(...)`
+
+3. Create next layer of entities  
+   → `populateReviewers(qty)`  
+   → `createPlainReviews(qty)` (reviews without owners yet)
+   → `populatePropertyContracts(qty)` (with owners and apartments)
+
+4. Wire relationships in multiple steps  
+   → `assignReviewersToReviews(...)`  
+   → `assignReviewsToApartments(...)`
+
+**Key characteristics of the pattern used here:**
+
+- **Linear orchestration** — one master method calls smaller, single-responsibility methods in strict order
+- **Progressive enrichment** — start with "plain" entities → gradually add relationships
+- **Immutability avoidance** — entities are created, saved early, then updated multiple times (typical for JPA)
+- **Debuggability** — lots of console logging after each important step
+- **Return lists** — most helper methods return the list of persisted objects (good practice, even if not fully used yet)
+- **Randomized test data** — ThreadLocalRandom + fixed arrays of realistic values
+
+Orchestrator skeleton:
+
+```java
+ public int populateAll(int qty) {
+
+        // 1 populate Apartments > List
+        List<Apartment> plainApartments = populatePlainApartments(qty);
+        // 2 populate Schools > List
+        List<School> schools = populateSchools(qty);
+        // 3 assignSchoolsToApartments
+        List<Apartment> plainApartmentsWithSchools = assignSchoolsToApartments(plainApartments, schools);
+
+
+        // 4 populate Reviewers > List
+        List<Reviewer> reviewers = populateReviewers(qty);
+        // 5 create Reviews (very general description, valid for all apartments) and assign Reviewers
+        // DO NOT SAVE to db!
+        List<Review> plainReviews = createPlainReviews(qty);
+        // 6 assign Reviewers to Reviews
+        List<Review> reviews = assignReviewersToReviews(reviewers, plainReviews);
+        // 7 assign Reviews to Apartments
+        List<Apartment> plainApartmentsWithSchoolsAndReviews = assignReviewsToApartments(reviews, plainApartmentsWithSchools);
+
+
+        // 8 populate Owners
+        List<Owner> owners = populateOwners(qty);
+        // 9 populate PropertyContracts assign Owners and Apartments
+        List<PropertyContract> propertyContracts = populatePropertyContracts(qty);
+        // 10 check and return qty of created objects
+        // todo
+
+        return 0;
+    }
+```
+
+This creates a very readable, maintainable "story" of how the test database is built — exactly the purpose of a good orchestrator / seeder class.
 
 ## H2 & application.properties
 
