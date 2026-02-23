@@ -35,7 +35,7 @@ public class PopulateDB {
         // 2 populate Schools > List
         List<School> schools = populatePlainSchools(qty);
         // 3 assignSchoolsToApartments
-        //boolean status = assignSchoolsToApartments(plainApartments, schools);
+        boolean status = assignSchoolsToApartments(plainApartments, schools);
 
 
         // 4 populate Reviewers > List
@@ -54,7 +54,7 @@ public class PopulateDB {
         // 10 check and return qty of created objects
 
 
-        return 0;
+        return qty;
     }
 
     // --------- POPULATE apartments
