@@ -57,7 +57,7 @@ public class PopulateDBController {
 
      @GetMapping("/populateSchools")
     public ResponseEntity<String> populateSchools(@RequestParam int qty) {
-        int qtySchoolsCreated = populateDB.populatePlainSchools(qty).size();
+        int qtySchoolsCreated = populateDB.populateSchools(qty).size();
         if (qtySchoolsCreated > 0)
             return ResponseEntity.ok("Populated schools: " + qtySchoolsCreated);
         else
