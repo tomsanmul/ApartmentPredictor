@@ -1,42 +1,47 @@
 package com.example.apartment_predictor.controller;
 
-import com.example.apartment_predictor.model.Review;
-import com.example.apartment_predictor.repository.ReviewRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.apartment_predictor.model.Review;
+import com.example.apartment_predictor.model.Reviewer;
+import com.example.apartment_predictor.utils.PopulateDB;
+
 @RestController
-@RequestMapping("/api/review")
-@CrossOrigin(origins = "*")
+@RequestMapping("api/v1/review")
 public class ReviewRestController {
 
     @Autowired
-    private ReviewRepository reviewRepo;
+    PopulateDB populateDB;
 
-    @GetMapping("/all")
-    public List<Review> llistarReviews() {
-        return reviewRepo.findAll();
+    // Create qty reviews, not populateDB
+    @GetMapping("/create")
+    public ResponseEntity<String> createReviews(@RequestParam int qty) {
+        List<Review> reviews = populateDB.createPlainReviews(qty);
+        if (reviews.size() > 0)
+            return ResponseEntity.ok("Populated reviews: " + reviews.size());
+        else
+            return ResponseEntity.badRequest().body("Failed to populate reviews");
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<Review> guardarReview(@RequestBody Review r) {
-        if (r.getDate() == null) {
-            r.setDate(java.time.LocalDate.now());
-        }
-        Review nova = reviewRepo.save(r);
-        return new ResponseEntity<>(nova, HttpStatus.CREATED);
+    @GetMapping("/populate")
+    public ResponseEntity<String> populateReviews(@RequestParam int qty) {
+        List<Reviewer> reviewers = populateDB.populateReviewers(qty);
+        List<Review> reviews = populateDB.createPlainReviews(qty);
+        List<Review> reviewsAssigned = populateDB.assignReviewersToReviews(reviewers, reviews );
+
+
+        if (reviewsAssigned.size() > 0)
+            return ResponseEntity.ok("Populated reviews: " + reviewsAssigned.size());
+        else
+            return ResponseEntity.badRequest().body("Failed to populate reviews");
     }
 
-    @DeleteMapping("/del/{id}")
-    public ResponseEntity<String> esborrar(@PathVariable Long id) {
-        if (reviewRepo.existsById(id)) {
-            reviewRepo.deleteById(id);
-            return new ResponseEntity<>("Review eliminada", HttpStatus.OK);
-        }
-        return new ResponseEntity<>("No s'ha trobat la review", HttpStatus.NOT_FOUND);
-    }
+
 }
