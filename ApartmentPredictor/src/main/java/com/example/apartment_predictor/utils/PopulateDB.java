@@ -35,18 +35,18 @@ public class PopulateDB {
         // 2 populate Schools > List
         List<School> schools = populatePlainSchools(qty);
         // 3 assignSchoolsToApartments
-        boolean status = assignSchoolsToApartments(plainApartments, schools);
+        //boolean status = assignSchoolsToApartments(plainApartments, schools);
 
 
         // 4 populate Reviewers > List
-        List<Reviewer> reviewers = populateReviewers(qty);
+        //List<Reviewer> reviewers = populateReviewers(qty);
         // 5 create Reviews (very general description, valid for all apartments) and assign Reviewers
         // DO NOT SAVE to db!
-        List<Review> plainReviews = populatePlainReviews(qty);
+        //List<Review> plainReviews = populatePlainReviews(qty);
         // 6 assign Reviewers to Reviews
-        List<Review> reviews = assignReviewersToReviews(reviewers, plainReviews);
+        //List<Review> reviews = assignReviewersToReviews(reviewers, plainReviews);
         // 7 assign Reviews to Apartments
-        List<Apartment> apartments = assignReviewsToApartments(reviews, plainApartments);
+        //List<Apartment> apartments = assignReviewsToApartments(reviews, plainApartments);
 
 
         // 8 populate Owners
@@ -57,43 +57,7 @@ public class PopulateDB {
         return 0;
     }
 
-    // --------- POPULATE apartments and schools ------------------------------
-
-    public List<School> populatePlainSchools(int qty) {
-        int qtySchoolsCreated = 0;
-        List<School> schools = new ArrayList<>();
-        if (qty <= 0) return null;
-
-        ThreadLocalRandom rnd = ThreadLocalRandom.current();
-
-        String[] schoolTypes = {"public", "private", "religious"};
-        String[] locations = {"Downtown", "Uptown", "Suburbs", "East Side", "West Side"};
-        String[] namePrefixes = {"Green", "Oak", "River", "Hill", "Sunrise", "Cedar", "Lakeside"};
-        String[] nameSuffixes = {"Academy", "School", "Institute", "High School", "College"};
-
-        for (int i = 0; i < qty; i++) {
-            String type = schoolTypes[rnd.nextInt(schoolTypes.length)];
-            String location = locations[rnd.nextInt(locations.length)];
-            int rating = rnd.nextInt(1, 6);
-            boolean isPublic = "public".equals(type);
-
-            String name = namePrefixes[rnd.nextInt(namePrefixes.length)] + " " + nameSuffixes[rnd.nextInt(nameSuffixes.length)];
-
-            School school = new School(name, type, location, rating, isPublic);
-            schoolRepository.save(school);
-
-            School schoolById = schoolRepository.findById(school.getId()).orElse(null);
-            if (schoolById != null) {
-                qtySchoolsCreated++;
-                schools.add(schoolById);
-                System.out.println(
-                        "School #" + qtySchoolsCreated +
-                                "/" + qty + " created populateDB: " + schoolById);
-            }
-        }
-
-        return schools;
-    }
+    // --------- POPULATE apartments
 
     public List<Apartment> populatePlainApartments(int qty) {
         int qtyApartmetnsCreated = 0;
@@ -139,6 +103,47 @@ public class PopulateDB {
         }
         return apartments;
     }
+
+    // --------- POPULATE schools --------------------------
+
+    public List<School> populatePlainSchools(int qty) {
+        int qtySchoolsCreated = 0;
+        List<School> schools = new ArrayList<>();
+        if (qty <= 0) return null;
+
+        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+
+        String[] schoolTypes = {"public", "private", "religious"};
+        String[] locations = {"Downtown", "Uptown", "Suburbs", "East Side", "West Side"};
+        String[] namePrefixes = {"Green", "Oak", "River", "Hill", "Sunrise", "Cedar", "Lakeside"};
+        String[] nameSuffixes = {"Academy", "School", "Institute", "High School", "College"};
+
+        for (int i = 0; i < qty; i++) {
+            String type = schoolTypes[rnd.nextInt(schoolTypes.length)];
+            String location = locations[rnd.nextInt(locations.length)];
+            int rating = rnd.nextInt(1, 6);
+            boolean isPublic = "public".equals(type);
+
+            String name = namePrefixes[rnd.nextInt(namePrefixes.length)] + " " + nameSuffixes[rnd.nextInt(nameSuffixes.length)];
+
+            School school = new School(name, type, location, rating, isPublic);
+            schoolRepository.save(school);
+
+            School schoolById = schoolRepository.findById(school.getId()).orElse(null);
+            if (schoolById != null) {
+                qtySchoolsCreated++;
+                schools.add(schoolById);
+                System.out.println(
+                        "School #" + qtySchoolsCreated +
+                                "/" + qty + " created populateDB: " + schoolById);
+            }
+        }
+
+        return schools;
+    }
+
+
+    // --------- AssignSchoolsToApartments
 
     public boolean assignSchoolsToApartments(List<Apartment> apartments, List<School> schools) {
         if (apartments == null || apartments.isEmpty() || schools == null || schools.isEmpty()) {

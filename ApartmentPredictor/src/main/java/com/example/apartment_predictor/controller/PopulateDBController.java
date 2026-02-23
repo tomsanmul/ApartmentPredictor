@@ -36,6 +36,16 @@ public class PopulateDBController {
     SchoolRepository schoolRepository;
 
    
+    @GetMapping("/populateAll")
+    public ResponseEntity<String> populateAll(@RequestParam int qty) {
+        int qtyPopulateAll = populateDB.populateAll(qty);
+        if (qtyPopulateAll > 0)
+            return ResponseEntity.ok("PopulateAll Objects: " + qtyPopulateAll);
+        else
+            return ResponseEntity.badRequest().body("Failed to populateAll Objects");
+    }
+
+
     @GetMapping("/populateApartments")
     public ResponseEntity<String> populateApartments(@RequestParam int qty) {
         int qtyApartmentsCreated = populateDB.populatePlainApartments(qty).size();
