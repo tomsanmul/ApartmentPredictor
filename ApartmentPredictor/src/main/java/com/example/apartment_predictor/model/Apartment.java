@@ -53,9 +53,8 @@ public class Apartment {
     public Apartment(Long price, Integer area, Integer bedrooms, Integer bathrooms, 
                     Integer stories, String mainroad, String guestroom, String basement,
                     String hotwaterheating, String airconditioning,
-                    Integer parking, String prefarea, String furnishingstatus, String propertyType) {
+                    Integer parking, String prefarea, String furnishingstatus) {
         this.id = UUID.randomUUID().toString();
-        this.propertyType = propertyType;
         this.price = price;
         this.area = area;
         this.bedrooms = bedrooms;
