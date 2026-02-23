@@ -1,51 +1,76 @@
 package com.example.apartment_predictor.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import java.time.LocalDate;
+
 
 @Entity
-@DiscriminatorValue("REVIEWER")
 public class Reviewer extends Person {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    private boolean isBusiness;
+    private String xAccount;
+    private String webURL;
+    private int qtyReviews;
 
-    private String description;
-    private int experienceYears;
 
-    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Review> reviews = new ArrayList<>();
+    // Default constructor
+    public Reviewer() {}
 
-    public Reviewer() { super(); }
+    // Constructor delegating to Person
+    public Reviewer(String fullName, String email, String password, LocalDate birthDate, boolean isActive,
+                    boolean isBusiness, String xAccount, String webURL, int qtyReviews) {
+        super(fullName, email, password, birthDate, isActive);
+        this.isBusiness = isBusiness;
+        this.xAccount = xAccount;
+        this.webURL = webURL;
+        this.qtyReviews = qtyReviews;
 
-    public Reviewer(String name, String email, String description, int experienceYears) {
-        this.setName(name);
-        this.setEmail(email);
-        this.description = description;
-        this.experienceYears = experienceYears;
     }
 
-    public void addReview(Review review) {
-        this.reviews.add(review);
-        review.setReviewer(this);
+    public boolean isBusiness() {
+        return isBusiness;
     }
 
-    // Getters i Setters específics
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public int getExperienceYears() { return experienceYears; }
-    public void setExperienceYears(int experienceYears) { this.experienceYears = experienceYears; }
-    public List<Review> getReviews() { return reviews; }
-    public void setReviews(List<Review> reviews) { this.reviews = reviews; }
+    public void setBusiness(boolean business) {
+        isBusiness = business;
+    }
+
+    public String getxAccount() {
+        return xAccount;
+    }
+
+    public void setxAccount(String xAccount) {
+        this.xAccount = xAccount;
+    }
+
+    public String getWebURL() {
+        return webURL;
+    }
+
+    public void setWebURL(String webURL) {
+        this.webURL = webURL;
+    }
+
+    public int getQtyReviews() {
+        return qtyReviews;
+    }
+
+    public void setQtyReviews(int qtyReviews) {
+        this.qtyReviews = qtyReviews;
+    }
+
+    @Override
+    public String toString() {
+        return "Reviewer{" +
+                "id='" + super.getId() + '\'' +
+                ", name='" + super.getFullName() + '\'' +
+                ", email='" + super.getEmail() + '\'' +
+                ", isActive=" + super.isActive() +
+                "isBusiness=" + isBusiness +
+                ", xAccount='" + xAccount + '\'' +
+                ", webURL='" + webURL + '\'' +
+                ", qtyReviews=" + qtyReviews +
+                '}';
+    }
 }
+
