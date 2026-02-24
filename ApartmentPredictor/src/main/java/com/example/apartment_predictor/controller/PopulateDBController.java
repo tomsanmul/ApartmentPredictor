@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.apartment_predictor.repository.SchoolRepository;
-import com.example.apartment_predictor.service.ApartmentService;
 import com.example.apartment_predictor.utils.PopulateDB;
 
 @RestController
@@ -18,14 +16,8 @@ public class PopulateDBController {
 
     @Autowired
     private PopulateDB populateDB;
+    
 
-    @Autowired
-    private ApartmentService apartmentService;
-
-    @Autowired
-    SchoolRepository schoolRepository;
-
-   
     @GetMapping("/populateAll")
     public ResponseEntity<String> populateAll(@RequestParam int qty) {
         int qtyPopulateAll = populateDB.populateAll(qty);
@@ -72,52 +64,14 @@ public class PopulateDBController {
             return ResponseEntity.badRequest().body("Failed to populate Reviewers");
     }
 
-
-
-    //Method for assign many schools To ONE ApartmentID
-    /*
-    @PutMapping("/assignSchoolsToApartment")
-    public ResponseEntity<Apartment> assignSchoolsToApartment(
-            @RequestParam String apartmentId,
-            @RequestParam List<String> schoolIds
-    ) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Status", "assignSchoolsToApartment executed");
-        headers.add("version", "1.0 Api Rest Apartment Object");
-        headers.add("active", "true");
-        headers.add("author", "Albert");
-
-        Apartment apartment = apartmentService.findApartmentById(apartmentId);
-        if (apartment == null) {
-            headers.add("Status", "assignSchoolsToApartment failed: apartment not found");
-            return ResponseEntity.
-                    badRequest().headers(headers).
-                    body(null);
-        }
-
-        if (schoolIds == null || schoolIds.isEmpty()) {
-            headers.add("Status", "assignSchoolsToApartment failed: schoolIds is null or empty");
-            apartment.setSchools(new ArrayList<>());
-            return ResponseEntity.badRequest().headers(headers).body(null);
-        }
-
-        Iterable<School> found = schoolRepository.findAllById(schoolIds);
-        List<School> schoolsFound = StreamSupport.stream(found.spliterator(), false)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        if (schoolsFound.size() != schoolIds.size()) {
-            headers.add("Status", "assignSchoolsToApartment failed: schools not found");
-            return ResponseEntity.badRequest().headers(headers).body(null);
-        }
-
-        apartment.addSchools(schoolsFound);
-        headers.add("Status", "assignSchoolsToApartment success");
-        Apartment apartmentSaved = apartmentService.updateApartment(apartment);
-        return ResponseEntity.ok().headers(headers).body(apartmentSaved);
+     @GetMapping("/populateOwners")
+    public ResponseEntity<String> populateOwners(@RequestParam int qty) {
+        int qtyeOwnersCreated = populateDB.populateOwners(qty).size();
+        if (qtyeOwnersCreated > 0)
+            return ResponseEntity.ok("Populated Reviewers: " + qtyeOwnersCreated);
+        else
+            return ResponseEntity.badRequest().body("Failed to populate Reviewers");
     }
-    */
 
 
  
