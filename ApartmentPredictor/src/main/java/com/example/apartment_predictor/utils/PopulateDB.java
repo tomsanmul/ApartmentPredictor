@@ -383,6 +383,7 @@ public class PopulateDB {
 
 
      public List<Owner> populateOwners(int qty) {
+        int qtyOwnersCreated = 0;
         List<Owner> owners = new ArrayList<>();
         if (qty <= 0) return null;
 
@@ -391,27 +392,33 @@ public class PopulateDB {
         String[] firstNames = {"John", "Jane", "Michael", "Sarah", "David", "Emily", "Robert", "Lisa", "James", "Mary"};
         String[] lastNames = {"Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"};
         String[] domains = {"gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "example.com"};
-        String[] idLegalOwners = {"john_reviewer", "jane_rates", "mike_reviews", "sarah_says", "david_deals", "emily_evaluates"};
-
-        if (qty <= 0) return null;
+        String[] idPrefixes = {"OWN", "PROP", "RLT", "INV", "MGT"};
 
         for (int i = 0; i < qty; i++) {
-           
             String firstName = firstNames[rnd.nextInt(firstNames.length)];
             String lastName = lastNames[rnd.nextInt(lastNames.length)];
             String fullName = firstName + " " + lastName;
             String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@" + domains[rnd.nextInt(domains.length)];
-            String password = "password123"; // We must generate random passwords
+            String password = "password123";
             boolean isActive = rnd.nextBoolean();
             boolean isBusiness = rnd.nextBoolean();
-            String idLegalOwner = "";
-            String registrationDate = "";
-            int qtyDaysAsOwner = rnd.nextInt(0, 51); // 0 to 50 reviews
-            LocalDate birthDate = LocalDate.now().minusYears(rnd.nextInt(18, 71)); // 18 to 70 years old  
-           
-            //Owner owner = new Owner(fullName, email, password, birthDate, isActive, isBusiness, idLegalOwner, registrationDate, qtyDaysAsOwner);
+            String idLegalOwner = idPrefixes[rnd.nextInt(idPrefixes.length)] + "-" + String.format("%06d", rnd.nextInt(1000000));
+            LocalDate registrationDate = LocalDate.now().minusDays(rnd.nextInt(0, 3650)); // 0 to 10 years ago
+            int qtyDaysAsOwner = (int) (LocalDate.now().toEpochDay() - registrationDate.toEpochDay());
+            LocalDate birthDate = LocalDate.now().minusYears(rnd.nextInt(25, 71)); // 25 to 70 years old
 
-    }
+            Owner owner = new Owner(fullName, email, password, birthDate, isActive, isBusiness, idLegalOwner, registrationDate, qtyDaysAsOwner);
+            ownerRepository.save(owner);
+
+            Owner ownerById = ownerRepository.findById(owner.getId()).orElse(null);
+            if (ownerById != null) {
+                qtyOwnersCreated++;
+                owners.add(ownerById);
+                System.out.println(
+                        "Owner #" + qtyOwnersCreated +
+                                "/" + qty + " created populateDB: " + ownerById);
+            }
+        }
 
         return owners;
     }
