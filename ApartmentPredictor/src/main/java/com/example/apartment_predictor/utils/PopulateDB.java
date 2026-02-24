@@ -14,6 +14,7 @@ import com.example.apartment_predictor.model.PropertyContract;
 import com.example.apartment_predictor.model.Review;
 import com.example.apartment_predictor.model.Reviewer;
 import com.example.apartment_predictor.model.School;
+import com.example.apartment_predictor.repository.OwnerRepository;
 import com.example.apartment_predictor.repository.ReviewRepository;
 import com.example.apartment_predictor.repository.ReviewerRepository;
 import com.example.apartment_predictor.repository.SchoolRepository;
@@ -30,6 +31,8 @@ public class PopulateDB {
     ReviewerRepository reviewerRepository;
     @Autowired
     ReviewRepository reviewRepository;
+    @Autowired
+    OwnerRepository ownerRepository;
 
 
     //todo: REFACTOR > all methods MUST return the objects created
@@ -380,15 +383,35 @@ public class PopulateDB {
 
 
      public List<Owner> populateOwners(int qty) {
-        int qtyOwnersCreated = 0;
         List<Owner> owners = new ArrayList<>();
         if (qty <= 0) return null;
 
         ThreadLocalRandom rnd = ThreadLocalRandom.current();
 
+        String[] firstNames = {"John", "Jane", "Michael", "Sarah", "David", "Emily", "Robert", "Lisa", "James", "Mary"};
+        String[] lastNames = {"Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"};
+        String[] domains = {"gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "example.com"};
+        String[] idLegalOwners = {"john_reviewer", "jane_rates", "mike_reviews", "sarah_says", "david_deals", "emily_evaluates"};
+
+        if (qty <= 0) return null;
+
         for (int i = 0; i < qty; i++) {
            
-        }
+            String firstName = firstNames[rnd.nextInt(firstNames.length)];
+            String lastName = lastNames[rnd.nextInt(lastNames.length)];
+            String fullName = firstName + " " + lastName;
+            String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@" + domains[rnd.nextInt(domains.length)];
+            String password = "password123"; // We must generate random passwords
+            boolean isActive = rnd.nextBoolean();
+            boolean isBusiness = rnd.nextBoolean();
+            String idLegalOwner = "";
+            String registrationDate = "";
+            int qtyDaysAsOwner = rnd.nextInt(0, 51); // 0 to 50 reviews
+            LocalDate birthDate = LocalDate.now().minusYears(rnd.nextInt(18, 71)); // 18 to 70 years old  
+           
+            //Owner owner = new Owner(fullName, email, password, birthDate, isActive, isBusiness, idLegalOwner, registrationDate, qtyDaysAsOwner);
+
+    }
 
         return owners;
     }

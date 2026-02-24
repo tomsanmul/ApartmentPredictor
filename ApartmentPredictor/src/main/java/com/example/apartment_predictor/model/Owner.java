@@ -23,6 +23,7 @@ public class Owner extends Person {
     }
 
 
+
     public boolean isBusiness() {
         return isBusiness;
     }
