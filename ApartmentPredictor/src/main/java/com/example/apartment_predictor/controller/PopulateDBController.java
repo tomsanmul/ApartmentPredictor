@@ -1,22 +1,12 @@
 package com.example.apartment_predictor.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.apartment_predictor.model.Apartment;
-import com.example.apartment_predictor.model.School;
 import com.example.apartment_predictor.repository.SchoolRepository;
 import com.example.apartment_predictor.service.ApartmentService;
 import com.example.apartment_predictor.utils.PopulateDB;
@@ -64,6 +54,28 @@ public class PopulateDBController {
             return ResponseEntity.badRequest().body("Failed to populate schools");
     }
 
+    @GetMapping("/populatePlainReviews")
+    public ResponseEntity<String> populatePlainReviews(@RequestParam int qty) {
+        int qtyReviewsCreated = populateDB.createPlainReviews(qty).size();
+        if (qtyReviewsCreated > 0)
+            return ResponseEntity.ok("Populated Reviews: " + qtyReviewsCreated);
+        else
+            return ResponseEntity.badRequest().body("Failed to populate Reviews");
+    }
+
+    @GetMapping("/populateReviewers")
+    public ResponseEntity<String> populateReviewers(@RequestParam int qty) {
+        int qtyReviewersCreated = populateDB.populateReviewers(qty).size();
+        if (qtyReviewersCreated > 0)
+            return ResponseEntity.ok("Populated Reviewers: " + qtyReviewersCreated);
+        else
+            return ResponseEntity.badRequest().body("Failed to populate Reviewers");
+    }
+
+
+
+    //Method for assign many schools To ONE ApartmentID
+    /*
     @PutMapping("/assignSchoolsToApartment")
     public ResponseEntity<Apartment> assignSchoolsToApartment(
             @RequestParam String apartmentId,
@@ -105,23 +117,9 @@ public class PopulateDBController {
         Apartment apartmentSaved = apartmentService.updateApartment(apartment);
         return ResponseEntity.ok().headers(headers).body(apartmentSaved);
     }
+    */
 
-    @GetMapping("/populatePlainReviews")
-    public ResponseEntity<String> populatePlainReviews(@RequestParam int qty) {
-        int qtyReviewsCreated = populateDB.createPlainReviews(qty).size();
-        if (qtyReviewsCreated > 0)
-            return ResponseEntity.ok("Populated Reviews: " + qtyReviewsCreated);
-        else
-            return ResponseEntity.badRequest().body("Failed to populate Reviews");
-    }
 
-    @GetMapping("/populateReviewers")
-    public ResponseEntity<String> populateReviewers(@RequestParam int qty) {
-        int qtyReviewersCreated = populateDB.populateReviewers(qty).size();
-        if (qtyReviewersCreated > 0)
-            return ResponseEntity.ok("Populated Reviewers: " + qtyReviewersCreated);
-        else
-            return ResponseEntity.badRequest().body("Failed to populate Reviewers");
-    }
+ 
 }
 

@@ -32,7 +32,6 @@ public class Owner {
 
     private int qtyDaysAsOwner;
 
-    // 🔴 OBLIGATORIO para JPA
     public Owner() {
     }
 
