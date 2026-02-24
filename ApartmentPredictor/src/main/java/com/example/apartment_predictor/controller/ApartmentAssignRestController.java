@@ -1,11 +1,10 @@
 package com.example.apartment_predictor.controller;
 
-import com.example.apartment_predictor.model.Apartment;
-import com.example.apartment_predictor.model.Review;
-import com.example.apartment_predictor.model.Reviewer;
-import com.example.apartment_predictor.model.School;
+import com.example.apartment_predictor.model.*;
 import com.example.apartment_predictor.repository.ReviewRepository;
 import com.example.apartment_predictor.repository.ReviewerRepository;
+import com.example.apartment_predictor.repository.OwnerRepository;
+import com.example.apartment_predictor.repository.PropertyContractRepository;
 import com.example.apartment_predictor.repository.SchoolRepository;
 import com.example.apartment_predictor.service.ApartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +34,12 @@ public class ApartmentAssignRestController {
 
     @Autowired
     ReviewRepository reviewRepository;
+
+    @Autowired
+    OwnerRepository ownerRepository;
+
+    @Autowired
+    PropertyContractRepository propertyContractRepository;
 
     @PutMapping("/schools")
     public ResponseEntity<Apartment> assignSchoolsToApartment(
@@ -139,11 +144,71 @@ public class ApartmentAssignRestController {
         return ResponseEntity.ok().headers(headers).body(apartmentSaved);
     }
 
-    @PutMapping("/owners")
-    public ResponseEntity<Apartment> assignOwnerToApartment(){
-        return null;
-    }
+    @PutMapping("/contractOwner")
+    public ResponseEntity<Apartment> assignOwnerAndApartmentToContract(
+            @RequestParam String apartmentId,
+            @RequestParam String ownerId,
+            @RequestBody PropertyContract propertyContractData
+    ){
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Status", "assignOwnerAndApartmentToContract executed");
+        headers.add("version", "1.0 Api Rest Apartment Object");
+        headers.add("active", "true");
+        headers.add("author", "Albert");
 
+        // Defensive programming: validate apartmentId exists
+        Apartment apartment = apartmentService.findApartmentById(apartmentId);
+        if (apartment == null) {
+            headers.add("Status", "assignOwnerAndApartmentToContract failed: apartment not found");
+            return ResponseEntity.badRequest().headers(headers).body(null);
+        }
+
+        // Defensive programming: validate ownerId exists
+        Owner owner = ownerRepository.findById(ownerId).orElse(null);
+        if (owner == null) {
+            headers.add("Status", "assignOwnerAndApartmentToContract failed: owner not found");
+            return ResponseEntity.badRequest().headers(headers).body(null);
+        }
+
+        // Defensive programming: validate propertyContractData is not null
+        if (propertyContractData == null) {
+            headers.add("Status", "assignOwnerAndApartmentToContract failed: propertyContractData is null");
+            return ResponseEntity.badRequest().headers(headers).body(null);
+        }
+
+        // Create a new PropertyContract with UUID id and data from propertyContractData
+        PropertyContract newPropertyContract = new PropertyContract();
+        newPropertyContract.setPropertyContractCode(propertyContractData.getPropertyContractCode());
+        newPropertyContract.setUrlContractPropertyDocument(propertyContractData.getUrlContractPropertyDocument());
+        newPropertyContract.setContractDate(propertyContractData.getContractDate() != null ? 
+            propertyContractData.getContractDate() : LocalDate.now());
+        newPropertyContract.setValuePropertyContract(propertyContractData.getValuePropertyContract());
+        newPropertyContract.setTypeProperty(propertyContractData.getTypeProperty() != null ? 
+            propertyContractData.getTypeProperty() : "APARTMENT");
+        newPropertyContract.setAddress(propertyContractData.getAddress() != null ? 
+            propertyContractData.getAddress() : "Address for Apartment " + apartmentId);
+        newPropertyContract.setActive(propertyContractData.isActive());
+
+        // Set relationships
+        newPropertyContract.setOwner(owner);
+        newPropertyContract.setApartment(apartment);
+
+        // Save newPropertyContract
+        propertyContractRepository.save(newPropertyContract);
+
+        // Verify the contract was saved
+        PropertyContract savedContract = propertyContractRepository.findById(newPropertyContract.getId()).orElse(null);
+        if (savedContract == null) {
+            headers.add("Status", "assignOwnerAndApartmentToContract failed: contract not saved");
+            return ResponseEntity.badRequest().headers(headers).body(null);
+        }
+
+        // Return apartment updated
+        headers.add("Status", "assignOwnerAndApartmentToContract success");
+        headers.add("contractId", savedContract.getId());
+        
+        return ResponseEntity.ok().headers(headers).body(apartment);
+    }
 
 
 }

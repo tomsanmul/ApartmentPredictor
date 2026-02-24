@@ -35,6 +35,10 @@ public class Apartment {
     )
     private List<School> schools = new ArrayList<>();
 
+    @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PropertyContract> contracts = new ArrayList<>();
+
+
     // Default constructor
     public Apartment() {
         this.id = UUID.randomUUID().toString();
@@ -61,6 +65,11 @@ public class Apartment {
         this.furnishingstatus = furnishingstatus;
     }
 
+    // helper
+    public void addContract(PropertyContract contract) {
+        contracts.add(contract);
+        contract.setApartment(this);
+    }
 
     public double calculatePrice() {
         double basePrice = area * 120 + (bedrooms * 8000);
@@ -215,6 +224,14 @@ public class Apartment {
 
     public void addSchools(List<School> schools ){
        this.schools.addAll(schools);
+    }
+
+    public List<PropertyContract> getContracts() {
+        return contracts;
+    }
+
+    public void setContracts(List<PropertyContract> contracts) {
+        this.contracts = contracts;
     }
 
     @Override
