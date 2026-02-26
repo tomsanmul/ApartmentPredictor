@@ -1,0 +1,24 @@
+package com.example.apartment_predictor.controller;
+import com.example.apartment_predictor.model.PropertyContract;
+import com.example.apartment_predictor.repository.PropertyContractRepository;
+import com.example.apartment_predictor.utils.PopulateDB;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("api/v1/propertycontract")
+public class PropiertyContractRestController {
+
+    @Autowired
+    PropertyContractRepository propertyContractRepository;
+    @Autowired
+    PopulateDB populateDB;
+
+    @GetMapping("/getAll")
+    public ResponseEntity<Iterable<PropertyContract>> getAllPropertyContracts(){
+        return ResponseEntity.ok().body(propertyContractRepository.findAll());
+    }
+}
