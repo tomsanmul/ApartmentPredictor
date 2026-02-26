@@ -1,57 +1,141 @@
 package com.example.apartment_predictor.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import java.util.UUID;
 
 @Entity
-@Table(name = "property_contracts")
 public class PropertyContract {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
+    private String propertyContractCode;
+    private String urlContractPropertyDocument;
+    private LocalDate contractDate;
+    private long valuePropertyContract;
+    private String typeProperty;
+    private String address;
+    private boolean isActive;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "owner_id")
-    @JsonBackReference // Evita que en carregar l'amo torni a carregar el contracte i entri en bucle
+    @JoinColumn(name = "OWNER_FK")
     private Owner owner;
-
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "apartment_id")
+    @JoinColumn(name = "APARTMENT_FK")
     private Apartment apartment;
 
-    private String contractDetails;
-    private LocalDate contractDate;
-    private Double finalPrice;
-
-    public PropertyContract(){}
-    
-    public PropertyContract(Owner owner, Apartment apartment, String contractDetails, LocalDate contractDate, Double finalPrice){
-        this.owner = owner;
-        this.apartment = apartment;
-        this.contractDetails = contractDetails;
-        this.contractDate = contractDate;
-        this.finalPrice = finalPrice;
+    public PropertyContract() {
+        this.id = UUID.randomUUID().toString();
     }
 
-    public Long getId(){return id;}
-    public void setId(Long id){this.id = id;}
-    public Owner getOwner(){return owner;}
-    public void setOwner(Owner owner){this.owner = owner;}
-    public Apartment getApartment(){return apartment;}
-    public void setApartment(Apartment apartment){this.apartment = apartment;}
-    public String getContractDetails(){return contractDetails;}
-    public void setContractDetails(String details){this.contractDetails = details;}
-    public LocalDate getContractDate(){return contractDate;}
-    public void setContractDate(LocalDate date){this.contractDate = date;}
-    public Double getFinalPrice(){return finalPrice;}
-    public void setFinalPrice(Double price){this.finalPrice = price;}
+    public PropertyContract(String propertyContractCode,String urlContractPropertyDocument, LocalDate contractDate, long valuePropertyContract, String typeProperty, String address, boolean isActive) {
+        this.id = UUID.randomUUID().toString();
+        this.propertyContractCode = propertyContractCode;
+        this.urlContractPropertyDocument = urlContractPropertyDocument;
+        this.contractDate = contractDate;
+        this.valuePropertyContract = valuePropertyContract;
+        this.typeProperty = typeProperty;
+        this.address = address;
+        this.isActive = isActive;
+
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getPropertyContractCode() {
+        return propertyContractCode;
+    }
+
+    public void setPropertyContractCode(String propertyContractCode) {
+        this.propertyContractCode = propertyContractCode;
+    }
+
+    public String getUrlContractPropertyDocument() {
+        return urlContractPropertyDocument;
+    }
+
+    public void setUrlContractPropertyDocument(String urlContractPropertyDocument) {
+        this.urlContractPropertyDocument = urlContractPropertyDocument;
+    }
+
+    public LocalDate getContractDate() {
+        return contractDate;
+    }
+
+    public void setContractDate(LocalDate contractDate) {
+        this.contractDate = contractDate;
+    }
+
+    public long getValuePropertyContract() {
+        return valuePropertyContract;
+    }
+
+    public void setValuePropertyContract(long valuePropertyContract) {
+        this.valuePropertyContract = valuePropertyContract;
+    }
+
+    public String getTypeProperty() {
+        return typeProperty;
+    }
+
+    public void setTypeProperty(String typeProperty) {
+        this.typeProperty = typeProperty;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
+
+    public Apartment getApartment() {
+        return apartment;
+    }
+
+    public void setApartment(Apartment apartment) {
+        this.apartment = apartment;
+    }
+
+    @Override
+    public String toString() {
+        return "PropertyContract{" +
+                "id='" + id + '\'' +
+                ", propertyContractCode='" + propertyContractCode + '\'' +
+                ", urlContractPropertyDocument='" + urlContractPropertyDocument + '\'' +
+                ", contractDate=" + contractDate +
+                ", valuePropertyContract=" + valuePropertyContract +
+                ", typeProperty='" + typeProperty + '\'' +
+                ", address='" + address + '\'' +
+                ", isActive=" + isActive +
+                ", owners=" + owner.getId() +
+                ", apartments=" + apartment.getId() +
+                '}';
+    }
 }
