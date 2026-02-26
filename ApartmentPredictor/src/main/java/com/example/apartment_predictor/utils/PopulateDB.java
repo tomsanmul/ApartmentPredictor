@@ -413,6 +413,7 @@ public class PopulateDB {
             Owner owner = new Owner(fullName, email, password, birthDate, isActive, isBusiness, idLegalOwner, registrationDate, qtyDaysAsOwner);
             ownerRepository.save(owner);
 
+            //Programació defensiva, comprova que s'ha creat l'Owner
             Owner ownerById = ownerRepository.findById(owner.getId()).orElse(null);
             if (ownerById != null) {
                 qtyOwnersCreated++;
