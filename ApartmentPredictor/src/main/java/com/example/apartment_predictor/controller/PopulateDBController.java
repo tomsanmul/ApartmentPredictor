@@ -12,6 +12,10 @@ import com.example.apartment_predictor.utils.PopulateDB;
 @RestController
 @RequestMapping("api/populate")
 
+
+//Entrega:
+//https://docs.google.com/forms/d/e/1FAIpQLSc6_tyC5xYzZvPYcbaVai1KF1HbpGHxfIjv9zLQJt65jgj9cQ/viewform?pli=1
+
 public class PopulateDBController {
 
     @Autowired
