@@ -42,90 +42,66 @@ public class PopulateDB {
     //todo: define our pattern, orchestrator
     //todo: define steps for our orchestrator > populateAll()
 
+    public int calculateQty(List<Apartment> plainApartments,
+                            List<School> schools, List<Reviewer> reviewers,
+                            List<Review> plainReviews, List<Owner> owners,
+                            List<PropertyContract> plainPropertyContractsAssigned) {
+        int totalQty = plainApartments.size() +
+                schools.size() +
+                reviewers.size() +
+                plainReviews.size() +
+                owners.size() +
+                plainPropertyContractsAssigned.size();
+        System.out.println("\n" +
+                "\nPopulateDB: " +
+                "\n---------------------------------------------" +
+                 "\nPopulated db: " + totalQty + " entities." +
+                "\nApartments: " + plainApartments.size() + " entities." +
+                "\nSchools: " + schools.size() + " entities." +
+                "\nReviewers: " + reviewers.size() + " entities." +
+                "\nReviews: " + plainReviews.size() + " entities." +
+                "\nOwners: " + owners.size() + " entities." +
+                "\nPropertyContracts: " + plainPropertyContractsAssigned.size() + " entities." +
+                "\n---------------------------------------------");
+        return totalQty;
+    }
+
     // --------- ORCHESTRATOR ------------------------------------------------
     public int populateAll(int qty) {
-
-        //PRIMER BLOC 
+        int totalQty = 0;
         // 1 populate Apartments > List
         List<Apartment> plainApartments = populatePlainApartments(qty);
         // 2 populate Schools > List
         List<School> schools = populateSchools(qty);
         // 3 assignSchoolsToApartments
-        List<Apartment> plainApartmentsWithSchools = assignSchoolsToApartments(plainApartments, schools);
+        List<Apartment> plainApartmentsWithSchools =
+                assignSchoolsToApartments(plainApartments, schools);
 
-
-        //SEGON BLOC
         // 4 populate Reviewers > List
         List<Reviewer> reviewers = populateReviewers(qty);
         // 5 create Reviews (very general description, valid for all apartments) and assign Reviewers
         // DO NOT SAVE to db!
         List<Review> plainReviews = createPlainReviews(qty);
-
         // 6 assign Reviewers to Reviews
         List<Review> reviews = assignReviewersToReviews(reviewers, plainReviews);
-
         // 7 assign Reviews to Apartments
-        List<Apartment> plainApartmentsWithSchoolsAndReviews = assignReviewsToApartments(reviews, plainApartmentsWithSchools);
+        List<Apartment> plainApartmentsWithSchoolsAndReviews =
+                assignReviewsToApartments(reviews, plainApartmentsWithSchools);
 
-
-        //TERCER BLOC
         // 8 populate Owners
         List<Owner> owners = populateOwners(qty);
+        // 9 populate PlainPropertyContracts
+        //List<PropertyContract> plainPropertyContracts = populatePlainPropertyContracts(qty);
         // 9 populate PropertyContracts assign Owners and Apartments
-        //List<PropertyContract> propertyContracts = populatePropertyContracts(qty);
+        List<PropertyContract> plainPropertyContractsAssigned =
+                createAndAssignPropertyContracts(qty, owners, plainApartmentsWithSchoolsAndReviews);
         // 10 check and return qty of created objects
+        totalQty = calculateQty(plainApartments, schools, reviewers, plainReviews, owners, plainPropertyContractsAssigned);
 
-
-        return qty;
+        return totalQty;
     }
 
-
-    // --------- POPULATE apartments, schools and Assign ------------------------------
-
-    public List<Apartment> populatePlainApartments(int qty) {
-        int qtyApartmetnsCreated = 0;
-        List<Apartment> apartments = new ArrayList<>();
-        if (qty <= 0) return null;
-
-        //Faker faker = new Faker(new Locale("en-US"));
-        ThreadLocalRandom rnd = ThreadLocalRandom.current();
-
-        String[] furnishingOptions = {"furnished", "semi-furnished", "unfurnished"};
-
-        for (int i = 0; i < qty; i++) {
-            Long price = rnd.nextLong(30_000, 600_001);          // adjust range if you want
-            Integer area = rnd.nextInt(300, 5001);              // adjust range if you want
-            Integer bedrooms = rnd.nextInt(1, 7);
-            Integer bathrooms = rnd.nextInt(1, 5);
-            Integer stories = rnd.nextInt(1, 5);
-
-            String mainroad = rnd.nextBoolean() ? "yes" : "no";
-            String guestroom = rnd.nextBoolean() ? "yes" : "no";
-            String basement = rnd.nextBoolean() ? "yes" : "no";
-            String hotwaterheating = rnd.nextBoolean() ? "yes" : "no";
-            String airconditioning = rnd.nextBoolean() ? "yes" : "no";
-            Integer parking = rnd.nextInt(0, 4);
-            String prefarea = rnd.nextBoolean() ? "yes" : "no";
-
-            String furnishingstatus = furnishingOptions[rnd.nextInt(furnishingOptions.length)];
-
-            Apartment apartment = new Apartment(price, area, bedrooms, bathrooms, stories, mainroad, guestroom,
-                    basement, hotwaterheating, airconditioning, parking, prefarea, furnishingstatus);
-
-            apartmentService.createApartment(apartment);
-
-            Apartment apartmentById = apartmentService.findApartmentById(apartment.getId());
-            if (apartmentById != null) {
-                qtyApartmetnsCreated++;
-                apartments.add(apartmentById);
-                System.out.println(
-                        "Apartment #" + qtyApartmetnsCreated +
-                         "/" + qty + " created populateDB: " + apartmentById);
-            }
-
-        }
-        return apartments;
-    }
+    // --------- POPULATE apartments and schools ------------------------------
 
     public List<School> populateSchools(int qty) {
         int qtySchoolsCreated = 0;
@@ -161,6 +137,64 @@ public class PopulateDB {
         }
 
         return schools;
+    }
+
+    public List<Apartment> populatePlainApartments(int qty) {
+        int qtyApartmetnsCreated = 0;
+        List<Apartment> apartments = new ArrayList<>();
+        if (qty <= 0) return null;
+
+        //Faker faker = new Faker(new Locale("en-US"));
+        ThreadLocalRandom rnd = ThreadLocalRandom.current();
+
+        String[] furnishingOptions = {"furnished", "semi-furnished", "unfurnished"};
+
+        for (int i = 0; i < qty; i++) {
+            Long price = rnd.nextLong(30_000, 600_001);          // adjust range if you want
+            Integer area = rnd.nextInt(300, 5001);              // adjust range if you want
+            Integer bedrooms = rnd.nextInt(1, 7);
+            Integer bathrooms = rnd.nextInt(1, 5);
+            Integer stories = rnd.nextInt(1, 5);
+
+            String mainroad = rnd.nextBoolean() ? "yes" : "no";
+            String guestroom = rnd.nextBoolean() ? "yes" : "no";
+            String basement = rnd.nextBoolean() ? "yes" : "no";
+            String hotwaterheating = rnd.nextBoolean() ? "yes" : "no";
+            String airconditioning = rnd.nextBoolean() ? "yes" : "no";
+            Integer parking = rnd.nextInt(0, 4);
+            String prefarea = rnd.nextBoolean() ? "yes" : "no";
+
+            String furnishingstatus = furnishingOptions[rnd.nextInt(furnishingOptions.length)];
+
+            Apartment apartment = new Apartment(
+                    price,
+                    area,
+                    bedrooms,
+                    bathrooms,
+                    stories,
+                    mainroad,
+                    guestroom,
+                    basement,
+                    hotwaterheating,
+                    airconditioning,
+                    parking,
+                    prefarea,
+                    furnishingstatus
+            );
+
+            apartmentService.createApartment(apartment);
+
+            Apartment apartmentById = apartmentService.findApartmentById(apartment.getId());
+            if (apartmentById != null) {
+                qtyApartmetnsCreated++;
+                apartments.add(apartmentById);
+                System.out.println(
+                        "Apartment #" + qtyApartmetnsCreated +
+                         "/" + qty + " created populateDB: " + apartmentById);
+            }
+
+        }
+        return apartments;
     }
 
     public List<Apartment> assignSchoolsToApartments(List<Apartment> apartments,
@@ -200,7 +234,9 @@ public class PopulateDB {
         return apartments;
     }
 
-    // ---------- POPULATE reviews, reviewers and Assign------------------------------
+    // ---------- POPULATE reviews, reviewers ------------------------------
+
+    /*public List<Person> populatePeople(int qty){return null;}*/
 
     public List<Reviewer> populateReviewers(int qty) {
         int qtyReviewersCreated = 0;
@@ -379,13 +415,9 @@ public class PopulateDB {
         return updatedApartments;
     }
 
+    // ---------- POPULATE owners, property contracts ------------------------------
 
-
-
-    // ---------- POPULATE owners, property contracts and Assign------------------------------
-
-
-     public List<Owner> populateOwners(int qty) {
+    public List<Owner> populateOwners(int qty) {
         int qtyOwnersCreated = 0;
         List<Owner> owners = new ArrayList<>();
         if (qty <= 0) return null;
@@ -413,7 +445,6 @@ public class PopulateDB {
             Owner owner = new Owner(fullName, email, password, birthDate, isActive, isBusiness, idLegalOwner, registrationDate, qtyDaysAsOwner);
             ownerRepository.save(owner);
 
-            //Programació defensiva, comprova que s'ha creat l'Owner
             Owner ownerById = ownerRepository.findById(owner.getId()).orElse(null);
             if (ownerById != null) {
                 qtyOwnersCreated++;
@@ -426,6 +457,10 @@ public class PopulateDB {
 
         return owners;
     }
+
+    /*public List<PropertyContract> populatePlainPropertyContracts(int qty) {
+        return null;
+    }*/
 
     public List<PropertyContract> createAndAssignPropertyContracts(
             int qty, List<Owner> owners, List<Apartment> apartments) {
@@ -502,4 +537,3 @@ public class PopulateDB {
         return contracts;
     }
 }
-
