@@ -39,7 +39,7 @@ public class PopulateDB {
     public int calculateQty(List<Apartment> plainApartments,
                             List<School> schools, List<Reviewer> reviewers,
                             List<Review> plainReviews, List<Owner> owners,
-                            List<PropertyContract> plainPropertyContractsAssigned) {
+                            List<PropertyContract> plainPropertyContractsAssigned)  {
         int totalQty = plainApartments.size() +
                 schools.size() +
                 reviewers.size() +
