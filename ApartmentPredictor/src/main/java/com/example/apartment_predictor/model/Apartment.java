@@ -24,10 +24,10 @@ public class Apartment {
     private String prefarea;
     private String furnishingstatus;
 
-    @OneToMany(mappedBy = "apartment",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "apartment",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     private List<Review> reviews = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "APARTMENT_SCHOOL_JOIN_TABLE",
             joinColumns = @JoinColumn(name = "apartment_id"),
@@ -35,7 +35,7 @@ public class Apartment {
     )
     private List<School> schools = new ArrayList<>();
 
-    @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "apartment", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<PropertyContract> contracts = new ArrayList<>();
 
 

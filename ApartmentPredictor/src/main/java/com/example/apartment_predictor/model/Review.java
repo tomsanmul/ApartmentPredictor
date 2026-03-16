@@ -18,12 +18,12 @@ public class Review {
     private LocalDate reviewDate;
     @JsonIgnore
     @JoinColumn(name = "apartment_fk")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Apartment apartment;
 
     //@JsonIgnore
     @JoinColumn(name = "reviewer_fk")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Reviewer reviewer;
 
 
