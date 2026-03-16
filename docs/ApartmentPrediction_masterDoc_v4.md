@@ -31,6 +31,10 @@ Historical notes:
 
 - [Booking Controller](https://github.com/AlbertProfe/restaurantManager/blob/master/src/main/java/dev/example/restaurantManager/controller/BookingController.java) / [LibraryRestController](https://github.com/AlbertProfe/viladoms2022books/blob/master/libraryRest/src/main/java/com/example/myfirstprojectspring/LibraryRestController.java)
 
+#### Pagination
+
+-  [Paging and Sorting](https://docs.spring.io/spring-data/jpa/reference/repositories/query-methods-details.html#repositories.paging-and-sorting)  /  [Pagination](https://github.com/AlbertProfe/userBorrowBookPagination/blob/master/docs/pagination.md)  /[ Pageable: repo](https://github.com/AlbertProfe/BooksPageable)
+
 ### Product Goal
 
 > Use this small housing-price dataset to train a regularized regression model that handles multicollinearity, then expose predictions through a Spring Boot REST API and a React form UI where users input area, bedrooms, bathrooms, furnishing, and road proximity for instant price estimates.
@@ -216,6 +220,8 @@ public class Reviewer {
 
 ## Postman documentation API REST
 
+![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/postman-getPaginated.png)
+
 - [apartmentPredictorCRUD](https://documenter.getpostman.com/view/7473960/2sBXVeFs8L)
 
 ## JPA
@@ -326,6 +332,10 @@ private List<PropertyContract> contracts = new ArrayList<>();
 
 ## Pagination
 
+-  [Paging and Sorting](https://docs.spring.io/spring-data/jpa/reference/repositories/query-methods-details.html#repositories.paging-and-sorting) /  [Pagination](https://github.com/AlbertProfe/userBorrowBookPagination/blob/master/docs/pagination.md) / [Pageable: repo](https://github.com/AlbertProfe/BooksPageable)
+
+- [userBorrowBookPagination/docs](https://github.com/AlbertProfe/userBorrowBookPagination/tree/master/docs)
+
 > `Pagination` implementation will transform the current apartment listing system from loading <mark>all records into an efficient, scalable solution</mark> that handles thousands of apartments while maintaining optimal performance.
 
 Technical Requirements
@@ -338,7 +348,70 @@ Technical Requirements
 - Create frontend pagination controls with navigation buttons and page number display
 - Optimize database queries by limiting result sets and implementing proper indexing
 
-# 
+### Core Components
+
+- **Repository Layer:** Extended the [ApartmentRepository](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/repository/ApartmentRepository.java:6:0-7:1) interface to implement both `CrudRepository` and `PagingAndSortingRepository`. 
+  
+  - This combination provides basic CRUD operations alongside pagination capabilities. The repository automatically gains access to [findAll(Pageable pageable)](cci:1://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/service/ApartmentService.java:19:4-21:5) method for paginated queries.
+
+- **Service Layer:** Added [findPaginated(int pageNo, int pageSize)](cci:1://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/service/ApartmentService.java:83:4-85:5) method in [ApartmentService](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/service/ApartmentService.java:13:0-90:1) that creates a `Pageable` object using `Pageable.ofSize(pageSize).withPage(pageNo)`. 
+  
+  - This method delegates to the repository's pagination method and returns a `Page<Apartment>` object containing both data and metadata.
+
+- **Controller Layer:** Implemented <mark>REST endpoint</mark> `@GetMapping("/page")` with `@RequestParam int pageNo` to handle pagination requests. 
+  
+  - The `endpoint` returns `ResponseEntity<Page<Apartment>>` with custom HTTP headers including pagination metadata like page number, page size, and total object count.
+
+### Key Features
+
+The `Page` object provides comprehensive pagination information including:
+
+- content list, 
+- total elements, 
+- total pages, 
+- current page number, and whether the page has next/previous pages. 
+
+Headers are added to responses with <mark>metadata</mark> (`pageNo`, `pageSize`, `totalObjects`) for <mark>client-side pagination controls.</mark>
+
+### Code
+
+Rest Controller, Service and Repository
+
+```java
+// Rest Controler
+
+@GetMapping("/page")
+public ResponseEntity<Page<Apartment>> getApartmentsPaginated(@RequestParam int pageNo) {
+        final int PAGE_SIZE = 5;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Status", "getApartmentsPaginated executed");
+        headers.add("version", "1.0 Api Rest Apartment Object");
+        headers.add("active", "true");
+        headers.add("author", "Albert");
+        headers.add("pageSize", String.valueOf(PAGE_SIZE));
+        headers.add("pageNo", String.valueOf(pageNo));
+
+
+        Page<Apartment> apartments = apartmentService.findPaginated(pageNo, PAGE_SIZE);
+        headers.add("totalObjects", String.valueOf(apartments.getTotalElements()));
+
+        return ResponseEntity.ok().headers(headers).body(apartments);
+    }
+
+// service
+public Page<Apartment> findPaginated(int pageNo, int pageSize) {
+        return apartmentRepository.findAll(Pageable.ofSize(pageSize).withPage(pageNo));
+    }
+
+// repository
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import com.example.apartment_predictor.model.Apartment;
+
+public interface ApartmentRepository extends CrudRepository<Apartment, String>, PagingAndSortingRepository<Apartment, String> {
+}
+```
 
 ## Maven
 
