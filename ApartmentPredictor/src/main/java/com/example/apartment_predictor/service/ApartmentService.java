@@ -4,6 +4,8 @@ import com.example.apartment_predictor.model.Apartment;
 import com.example.apartment_predictor.model.Review;
 import com.example.apartment_predictor.repository.ApartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -78,6 +80,10 @@ public class ApartmentService {
     }
 
     public void findApartmentByPrice (){}
+
+    public Page<Apartment> findPaginated(int pageNo, int pageSize) {
+        return apartmentRepository.findAll(Pageable.ofSize(pageSize).withPage(pageNo));
+    }
 
 
 
