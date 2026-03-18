@@ -1,4 +1,4 @@
-# ApartmentPredictor masterDoc v4
+# ApartmentPredictor masterDoc v5
 
 ## Summary
 
@@ -35,6 +35,20 @@ Historical notes:
 
 -  [Paging and Sorting](https://docs.spring.io/spring-data/jpa/reference/repositories/query-methods-details.html#repositories.paging-and-sorting)  /  [Pagination](https://github.com/AlbertProfe/userBorrowBookPagination/blob/master/docs/pagination.md)  /[ Pageable: repo](https://github.com/AlbertProfe/BooksPageable)
 
+#### Specification
+
+- [JPA-specification-1.md](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-1.md) / [JPA-specification-2.md](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-2.md)
+
+- [Specifications :: Spring Data JPA](https://docs.spring.io/spring-data/jpa/reference/jpa/specifications.html)
+
+- Project reference:
+  
+  - [AlbertProfe/userBorrowBookFilter · GitHub](https://github.com/AlbertProfe/userBorrowBookFilter)
+  
+  - [repository/BorrowSpecification.java](https://github.com/AlbertProfe/userBorrowBookFilter/blob/master/userBorrowBookFilter/src/main/java/com/example/userBorrowBook/repository/BorrowSpecification.java)
+  
+  - [BorrowController.java](https://github.com/AlbertProfe/userBorrowBookFilter/blob/master/userBorrowBookFilter/src/main/java/com/example/userBorrowBook/controller/BorrowController.java)
+
 ### Product Goal
 
 > Use this small housing-price dataset to train a regularized regression model that handles multicollinearity, then expose predictions through a Spring Boot REST API and a React form UI where users input area, bedrooms, bathrooms, furnishing, and road proximity for instant price estimates.
@@ -49,9 +63,7 @@ From source:
 
 ### Version goal
 
-<mark>Pagination Implementation for Apartment Listings</mark>
-
-> Implement comprehensive **pagination** functionality for the Apartment entity to enhance performance and user experience when displaying apartment listings in the Apartment Predictor application.
+Create a specification filter for `Aparments`
 
 ## Project commits
 
@@ -220,8 +232,6 @@ public class Reviewer {
 
 ## Postman documentation API REST
 
-![](https://raw.githubusercontent.com/AlbertProfe/ApartmentPredictor/refs/heads/master/docs/screenshots/postman-getPaginated.png)
-
 - [apartmentPredictorCRUD](https://documenter.getpostman.com/view/7473960/2sBXVeFs8L)
 
 ## JPA
@@ -238,184 +248,9 @@ Spring Data’s mission is to provide a familiar and consistent, **Spring-based
 
 This is an **umbrella project which contains many subprojects** that are specific to a given database. The projects are developed by working together with many of the companies and developers that are behind these exciting technologies.
 
-### Lazy and Eager
+### Apartment Specifications
 
-- https://github.com/AlbertProfe/userBorrowBookFilter/blob/master/docs/userBorrowBook-filter-lazy-eager.md
-
-### Cascade Delete
-
-> Gaol to refactor: when an Apartment is deleted:
-
-1. ✅ **School**: NOT deleted (only join table entries removed)
-
-2. ✅ **Review**: DELETED (but `Reviewer` remains)
-
-3. ✅ **PropertyContract**: DELETED (but `Owner` remains)
-
-> The refactoring ensures that deleting an `Apartment` only removes its directly dependent entities while preserving shared entities that may be referenced by other apartments in the system.
-
-<mark>Current State Analysis</mark> form *version 3*
-
-**Current Relationships in Apartment.java:**
-
-- **Reviews**: `@OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)`
-- **Schools**: `@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)` (Line 30)
-- **Contracts**: `@OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, orphanRemoval = true)`
-
-**Current Issues:**
-
-1. **Reviews**: Currently cascades ALL, which would delete Reviewer when Apartment is deleted
-2. **Schools**: Currently cascades ALL, which would delete School when Apartment is deleted
-3. **Contracts**: Currently cascades ALL, which would delete Owner when Apartment is deleted
-
-<mark>Required Changes</mark>
-
-#### 1. Reviews Relationship
-
-**Current Problem**: `cascade = CascadeType.ALL` deletes Reviewer when Apartment is deleted **Solution**: Change to `cascade = CascadeType.REMOVE` to only delete Review entities
-
-```java
-@OneToMany(mappedBy = "apartment", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
-private List<Review> reviews = new ArrayList<>();
-```
-
-#### 2. Schools Relationship
-
-**Current Problem**: `cascade = CascadeType.ALL` deletes School when Apartment is deleted **Solution**: Remove cascade completely to prevent School deletion
-
-```java
-@ManyToMany(fetch = FetchType.EAGER)
-@JoinTable(
-    name = "APARTMENT_SCHOOL_JOIN_TABLE",
-    joinColumns = @JoinColumn(name = "apartment_id"),
-    inverseJoinColumns = @JoinColumn(name = "school_id")
-)
-private List<School> schools = new ArrayList<>();
-```
-
-#### 3. Contracts Relationship
-
-**Current Problem**: `cascade = CascadeType.ALL` deletes Owner when Apartment is deleted **Solution**: Change to `cascade = CascadeType.REMOVE` to only delete PropertyContract entities
-
-```java
-@OneToMany(mappedBy = "apartment", cascade = CascadeType.REMOVE, orphanRemoval = true)
-private List<PropertyContract> contracts = new ArrayList<>();
-```
-
-#### 4. Review Entity
-
-**Current Problem**: Both relationships have `cascade = CascadeType.ALL` **Solution**: Remove cascade from both relationships to prevent cascading to Apartment and Reviewer
-
-```java
-@JoinColumn(name = "apartment_fk")
-@ManyToOne(fetch = FetchType.EAGER)
-private Apartment apartment;
-
-@JoinColumn(name = "reviewer_fk") 
-@ManyToOne(fetch = FetchType.EAGER)
-private Reviewer reviewer;
-```
-
-<mark>Refactored</mark> `Apartment.java`
-
-```java
-@OneToMany(mappedBy = "apartment", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
-private List<Review> reviews = new ArrayList<>();
-
-@ManyToMany(fetch = FetchType.EAGER)
-@JoinTable(
-    name = "APARTMENT_SCHOOL_JOIN_TABLE",
-    joinColumns = @JoinColumn(name = "apartment_id"),
-    inverseJoinColumns = @JoinColumn(name = "school_id")
-)
-private List<School> schools = new ArrayList<>();
-
-@OneToMany(mappedBy = "apartment", cascade = CascadeType.REMOVE, orphanRemoval = true)
-private List<PropertyContract> contracts = new ArrayList<>();
-```
-
-## Pagination
-
--  [Paging and Sorting](https://docs.spring.io/spring-data/jpa/reference/repositories/query-methods-details.html#repositories.paging-and-sorting) /  [Pagination](https://github.com/AlbertProfe/userBorrowBookPagination/blob/master/docs/pagination.md) / [Pageable: repo](https://github.com/AlbertProfe/BooksPageable)
-
-- [userBorrowBookPagination/docs](https://github.com/AlbertProfe/userBorrowBookPagination/tree/master/docs)
-
-> `Pagination` implementation will transform the current apartment listing system from loading <mark>all records into an efficient, scalable solution</mark> that handles thousands of apartments while maintaining optimal performance.
-
-Technical Requirements
-
-- Integrate Spring Data JPA pagination using `Pageable` interface
-- Modify repository methods to return `Page<Apartment>` instead of `List<Apartment>`
-- Update REST controllers to accept pagination parameters (`page`, `size`, `sort`)
-- Implement custom pagination queries for complex filtering scenarios (price range, area, bedrooms)
-- Add pagination metadata to API responses including total elements, total pages, and current page info
-- Create frontend pagination controls with navigation buttons and page number display
-- Optimize database queries by limiting result sets and implementing proper indexing
-
-### Core Components
-
-- **Repository Layer:** Extended the [ApartmentRepository](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/repository/ApartmentRepository.java:6:0-7:1) interface to implement both `CrudRepository` and `PagingAndSortingRepository`. 
-  
-  - This combination provides basic CRUD operations alongside pagination capabilities. The repository automatically gains access to [findAll(Pageable pageable)](cci:1://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/service/ApartmentService.java:19:4-21:5) method for paginated queries.
-
-- **Service Layer:** Added [findPaginated(int pageNo, int pageSize)](cci:1://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/service/ApartmentService.java:83:4-85:5) method in [ApartmentService](cci:2://file:///home/albert/MyProjects/Sandbox/ApartmentPredictorProject/ApartmentPredictor/src/main/java/com/example/apartment_predictor/service/ApartmentService.java:13:0-90:1) that creates a `Pageable` object using `Pageable.ofSize(pageSize).withPage(pageNo)`. 
-  
-  - This method delegates to the repository's pagination method and returns a `Page<Apartment>` object containing both data and metadata.
-
-- **Controller Layer:** Implemented <mark>REST endpoint</mark> `@GetMapping("/page")` with `@RequestParam int pageNo` to handle pagination requests. 
-  
-  - The `endpoint` returns `ResponseEntity<Page<Apartment>>` with custom HTTP headers including pagination metadata like page number, page size, and total object count.
-
-### Key Features
-
-The `Page` object provides comprehensive pagination information including:
-
-- content list, 
-- total elements, 
-- total pages, 
-- current page number, and whether the page has next/previous pages. 
-
-Headers are added to responses with <mark>metadata</mark> (`pageNo`, `pageSize`, `totalObjects`) for <mark>client-side pagination controls.</mark>
-
-### Code
-
-Rest Controller, Service and Repository
-
-```java
-// Rest Controler
-
-@GetMapping("/page")
-public ResponseEntity<Page<Apartment>> getApartmentsPaginated(@RequestParam int pageNo) {
-        final int PAGE_SIZE = 5;
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Status", "getApartmentsPaginated executed");
-        headers.add("version", "1.0 Api Rest Apartment Object");
-        headers.add("active", "true");
-        headers.add("author", "Albert");
-        headers.add("pageSize", String.valueOf(PAGE_SIZE));
-        headers.add("pageNo", String.valueOf(pageNo));
-
-
-        Page<Apartment> apartments = apartmentService.findPaginated(pageNo, PAGE_SIZE);
-        headers.add("totalObjects", String.valueOf(apartments.getTotalElements()));
-
-        return ResponseEntity.ok().headers(headers).body(apartments);
-    }
-
-// service
-public Page<Apartment> findPaginated(int pageNo, int pageSize) {
-        return apartmentRepository.findAll(Pageable.ofSize(pageSize).withPage(pageNo));
-    }
-
-// repository
-
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import com.example.apartment_predictor.model.Apartment;
-
-public interface ApartmentRepository extends CrudRepository<Apartment, String>, PagingAndSortingRepository<Apartment, String> {
-}
-```
+todo
 
 ## Maven
 
