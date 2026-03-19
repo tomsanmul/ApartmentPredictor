@@ -37,7 +37,7 @@ Historical notes:
 
 #### Specification
 
-- [JPA-specification-1](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-1.md) / [JPA-specification-2](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-2.md) / [JPA-specification-Apartment](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-Apartment.md))
+- [JPA-specification-1](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-1.md) / [JPA-specification-2](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-2.md) / [JPA-specification-Apartment Plain](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-Apartment.md)
 
 - [JPA-2026_QueryReport](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-2026_QueryReport.md)
 
@@ -65,7 +65,13 @@ From source:
 
 ### Version goal
 
-Create a specification filter for `Aparments`
+> The Apartment <mark>Filter Specification</mark> version 5.0 establishes a comprehensive filtering framework for apartment listings using `Spring Data JPA Specifications.` 
+
+This implementation provides flexible,**type-safe querying** capabilities with multiple filter criteria including price ranges, area requirements, room counts, amenities, and location preferences. 
+
+The `API` supports partial text matching for furnishing status and exact `boolean` filtering for yes/no fields, enabling precise apartment discovery. `Response` `headers` deliver valuable metadata including total database count and filtered result size, empowering clients with dataset insights. 
+
+The **specification** prioritizes performance through single-query execution and lazy loading while maintaining clean `REST API` principles with standardized versioning and comprehensive error handling.
 
 ## Project commits
 
@@ -113,6 +119,29 @@ $ tree
     └── PrintingUtils.java
 
 6 directories, 28 files
+```
+
+<mark>New classes:</mark>
+
+```textile
+.
+├── ApartmentPredictorApplication.java
+├── controller
+│   ├── ApartmentAssignRestController.java
+│   ├── ApartmentFilterRestController.java
+│   ...
+│   └── SchoolRestController.java
+├── model
+│   ...
+├── repository
+│   ├── ApartmentRepository.java
+│   ├── ApartmentSpecification.java
+│   ...
+├── service
+│  
+└── utils
+    ...
+    └── PrintingUtils.java
 ```
 
 ## Data Model
@@ -250,9 +279,148 @@ Spring Data’s mission is to provide a familiar and consistent, **Spring-based
 
 This is an **umbrella project which contains many subprojects** that are specific to a given database. The projects are developed by working together with many of the companies and developers that are behind these exciting technologies.
 
-### Apartment Specifications
+### Plain Apartment Specification
 
-todo
+Specification
+
+- [JPA-specification-1](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-1.md) / [JPA-specification-2](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-2.md) / [JPA-specification-Apartment Plain](https://github.com/AlbertProfe/ApartmentPredictor/blob/master/docs/appends/JPA-specification-Apartment.md)
+
+> The Apartment Filter API provides flexible filtering capabilities for apartment listings using Spring Data JPA Specifications. This allows clients to filter apartments based on multiple criteria in a single request.  
+
+<mark>Endpoint</mark>
+
+```jsx
+GET /api/v1/apartment/filter  
+```
+
+<mark>Request Parameters</mark>
+
+All parameters are optional. If no parameters are provided, all apartments will be returned.  
+
+| Parameter          | Type    | Description                                   | Example     |
+| ------------------ | ------- | --------------------------------------------- | ----------- |
+| `maxPrice`         | Long    | Maximum price (≤)                             | `10000000`  |
+| `minArea`          | Integer | Minimum area in sq ft/m² (≥)                  | `1000`      |
+| `minBedrooms`      | Integer | Minimum number of bedrooms (≥)                | `2`         |
+| `minBathrooms`     | Integer | Minimum number of bathrooms (≥)               | `1`         |
+| `minParking`       | Integer | Minimum parking spaces (≥)                    | `1`         |
+| `furnishingStatus` | String  | Furnishing status (partial, case-insensitive) | `furnished` |
+| `mainroad`         | Boolean | Located on main road (yes/no)                 | `true`      |
+| `guestroom`        | Boolean | Has guest room (yes/no)                       | `false`     |
+| `basement`         | Boolean | Has basement (yes/no)                         | `true`      |
+| `hotwaterheating`  | Boolean | Has hot water heating (yes/no)                | `true`      |
+| `airconditioning`  | Boolean | Has air conditioning (yes/no)                 | `true`      |
+| `prefarea`         | Boolean | Located in preferred area (yes/no)            | `true`      |
+
+<mark>Response Headers</mark>
+
+The API returns metadata in response headers:  
+
+| Header                | Description                         | Example                         |
+| --------------------- | ----------------------------------- | ------------------------------- |
+| `Status`              | Operation status                    | `filterApartments success`      |
+| `version`             | API version                         | `1.0 Api Rest Apartment Object` |
+| `active`              | API status                          | `true`                          |
+| `author`              | API author                          | `Albert`                        |
+| `total-apartments`    | Total apartments in database        | `545`                           |
+| `filtered-apartments` | Apartments matching filter criteria | `23`                            |
+
+<mark>Response Body</mark>
+
+Returns a JSON array of Apartment objects that match the filter criteria.  
+
+```json
+ [
+  {
+    "id": "60a87c58-275d-4616-a550-476e9709b2ed",
+    "price": 8500000,
+    "area": 1200,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "stories": 1,
+    "mainroad": "yes",
+    "guestroom": "no",
+    "basement": "yes",
+    "hotwaterheating": "yes",
+    "airconditioning": "yes",
+    "parking": 1,
+    "prefarea": "yes",
+    "furnishingstatus": "furnished"
+    // other fields.. 
+  }
+]
+  
+```
+
+### Example Requests
+
+**Filter by Maximum Price**
+
+```jsx
+GET /api/v1/apartment/filter?maxPrice=10000000  
+```
+
+**Filter by Multiple Criteria**
+
+```jsx
+GET /api/v1/apartment/filter?maxPrice=15000000&minBedrooms=2&airconditioning=true&prefarea=true  
+```
+
+**Filter by Furnishing Status**
+
+```jsx
+GET /api/v1/apartment/filter?furnishingStatus=furnished  
+```
+
+**Complex Filter**
+
+```jsx
+GET /api/v1/apartment/filter?maxPrice=20000000&minArea=1000&minBedrooms=3&minBathrooms=2&furnishingStatus=semi&mainroad=true&airconditioning=true  
+```
+
+### Implementation Details
+
+<mark>ApartmentSpecification</mark>
+
+The filtering logic is implemented using `Spring Data JPA Specifications:  `
+
+- **Price**: `≤ maxPrice` (if provided)  
+- **Area**: `≥ minArea` (if provided)  
+- **Bedrooms/Bathrooms/Parking**: `≥ minimum` (if provided)  
+- **Furnishing Status**: Partial match, case-insensitive  
+- **Boolean Fields**: Exact match against "yes"/"no" strings  
+
+<mark>ApartmentFilterRestController</mark>
+
+The `REST` controller:  
+
+- Accepts optional query parameters  
+- Creates Specification using ApartmentSpecification.filterBy()  
+- Executes query using JpaSpecificationExecutor  
+- Returns filtered results with metadata headers  
+
+### Usage Examples
+
+#### JavaScript/Fetch
+
+```javascript
+const response = await fetch('/api/v1/apartment/filter?maxPrice=10000000&minBedrooms=2');  
+const apartments = await response.json();  
+console.log('Total apartments:', response.headers.get('total-apartments'));  
+console.log('Filtered apartments:', response.headers.get('filtered-apartments'));  
+```
+
+#### cURL
+
+```bash  
+curl -X GET "http://localhost:8080/api/v1/apartment/filter?maxPrice=15000000&airconditioning=true" \  -H "Accept: application/json"```  
+
+#### Postman
+
+- Method: GET  
+- URL: `http://localhost:8080/api/v1/apartment/filter`  
+- Query Parameters: Add as needed  
+- Headers: `Accept: application/json`
 
 ## Maven
 
