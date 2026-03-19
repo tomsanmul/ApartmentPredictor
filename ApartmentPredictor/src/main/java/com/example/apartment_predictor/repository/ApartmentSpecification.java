@@ -1,10 +1,17 @@
 package com.example.apartment_predictor.repository;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.example.apartment_predictor.model.Apartment;
-import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.*;
+import com.example.apartment_predictor.model.Review;
+import com.example.apartment_predictor.model.School;
 
-import java.util.Objects;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 
 public class ApartmentSpecification {
 
@@ -20,7 +27,9 @@ public class ApartmentSpecification {
             Boolean basement,
             Boolean hotwaterheating,
             Boolean airconditioning,
-            Boolean prefarea            // preferred area yes/no
+            Boolean prefarea,            // preferred area yes/no
+            Integer minReviews,
+            Integer minSchools
     ) {
         return (Root<Apartment> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 
@@ -80,8 +89,28 @@ public class ApartmentSpecification {
             p = addYesNoFilter(p, cb, root, "airconditioning", airconditioning);
             p = addYesNoFilter(p, cb, root, "prefarea", prefarea);
 
-            return p;
-        };
+
+            // ─────────────────────────────
+            // Filtro por número mínimo de reviews
+            // ─────────────────────────────
+            if (minReviews != null && minReviews > 0) {
+                Join<Apartment, Review> reviewJoin = root.join("reviews", JoinType.LEFT);
+                query.groupBy(root.get("id")); // necesario para contar
+                query.having(cb.greaterThanOrEqualTo(cb.count(reviewJoin), minReviews.longValue()));
+            }
+
+
+             // ─────────────────────────────
+            // Filtro por número mínimo de Schools
+            // ─────────────────────────────
+            if (minSchools != null && minSchools > 0) {
+                Join<Apartment, School> SchoolsJoin = root.join("schools", JoinType.LEFT);
+                query.groupBy(root.get("id")); // necesario para contar
+                query.having(cb.greaterThanOrEqualTo(cb.count(SchoolsJoin), minSchools.longValue()));
+            }
+
+                return p;
+            };
     }
 
     // Small helper – makes yes/no filters cleaner

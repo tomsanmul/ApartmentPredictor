@@ -1,15 +1,19 @@
 package com.example.apartment_predictor.controller;
 
-import com.example.apartment_predictor.model.Apartment;
-import com.example.apartment_predictor.repository.ApartmentRepository;
-import com.example.apartment_predictor.repository.ApartmentSpecification;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.repository.ApartmentRepository;
+import com.example.apartment_predictor.repository.ApartmentSpecification;
 
 @RestController
 @RequestMapping("/api/v1/apartment")
@@ -31,7 +35,10 @@ public class ApartmentFilterRestController {
             @RequestParam(required = false) Boolean basement,
             @RequestParam(required = false) Boolean hotwaterheating,
             @RequestParam(required = false) Boolean airconditioning,
-            @RequestParam(required = false) Boolean prefarea
+            @RequestParam(required = false) Boolean prefarea,
+            @RequestParam(required = false) Integer minReviews,
+            @RequestParam(required = false) Integer minSchools
+
     ) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Status", "filterApartments executed");
@@ -42,7 +49,7 @@ public class ApartmentFilterRestController {
         Specification<Apartment> spec = ApartmentSpecification.filterBy(
                 maxPrice, minArea, minBedrooms, minBathrooms, minParking,
                 furnishingStatus, mainroad, guestroom, basement,
-                hotwaterheating, airconditioning, prefarea
+                hotwaterheating, airconditioning, prefarea, minReviews, minSchools
         );
 
         List<Apartment> apartments = apartmentRepository.findAll(spec);
