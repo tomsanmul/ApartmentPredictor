@@ -3,12 +3,13 @@ package com.example.apartment_predictor.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.apartment_predictor.model.Apartment;
 import com.example.apartment_predictor.model.Review;
 import com.example.apartment_predictor.repository.ApartmentRepository;
-
 
 @Service
 public class ApartmentService {
@@ -28,7 +29,6 @@ public class ApartmentService {
 
        return apartmentRepository.save(apartment);
     }
-
 
     public Apartment updateApartmentById(String id, Apartment apartment) {
         if (id == null || apartment == null) {
@@ -79,9 +79,12 @@ public class ApartmentService {
 
     }
 
-    public void findApartmentByPrice (){
-        
+    public void findApartmentByPrice (){}
+
+    public Page<Apartment> findPaginated(int pageNo, int pageSize) {
+        return apartmentRepository.findAll(Pageable.ofSize(pageSize).withPage(pageNo));
     }
+
 
 
 
