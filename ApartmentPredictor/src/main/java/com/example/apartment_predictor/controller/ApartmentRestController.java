@@ -90,6 +90,24 @@ public class ApartmentRestController {
             return ResponseEntity.badRequest().body("Failed to populate apartments");
     }
 
+    @GetMapping("/page")
+    public ResponseEntity<Page<Apartment>> getApartmentsPaginated(@RequestParam int pageNo) {
+        final int PAGE_SIZE = 5;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Status", "getApartmentsPaginated executed");
+        headers.add("version", "1.0 Api Rest Apartment Object");
+        headers.add("active", "true");
+        headers.add("author", "Albert");
+        headers.add("pageSize", String.valueOf(PAGE_SIZE));
+        headers.add("pageNo", String.valueOf(pageNo));
+
+
+        Page<Apartment> apartments = apartmentService.findPaginated(pageNo, PAGE_SIZE);
+        headers.add("totalObjects", String.valueOf(apartments.getTotalElements()));
+
+        return ResponseEntity.ok().headers(headers).body(apartments);
+    }
+
     @PutMapping("/assignSchoolsToApartment")
     public ResponseEntity<Apartment> assignSchoolsToApartment(
             @RequestParam String apartmentId,
