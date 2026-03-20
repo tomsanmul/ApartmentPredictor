@@ -99,6 +99,7 @@ public class ApartmentSpecification {
                 // Group by apartment and count schools
                 query.groupBy(root.get("id"));
                 query.having(cb.ge(cb.count(schoolJoin), minSchools));
+
             }
 
             // ─────────────────────────────────────────────
