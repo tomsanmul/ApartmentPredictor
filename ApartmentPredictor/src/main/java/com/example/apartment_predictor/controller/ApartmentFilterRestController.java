@@ -37,7 +37,8 @@ public class ApartmentFilterRestController {
             @RequestParam(required = false) Boolean airconditioning,
             @RequestParam(required = false) Boolean prefarea,
             @RequestParam(required = false) Integer minReviews,
-            @RequestParam(required = false) Integer minSchools
+            @RequestParam(required = false) Integer minSchools,
+            @RequestParam(required = false) String textToSearch 
 
     ) {
         HttpHeaders headers = new HttpHeaders();
@@ -49,7 +50,7 @@ public class ApartmentFilterRestController {
         Specification<Apartment> spec = ApartmentSpecification.filterBy(
                 maxPrice, minArea, minBedrooms, minBathrooms, minParking,
                 furnishingStatus, mainroad, guestroom, basement,
-                hotwaterheating, airconditioning, prefarea, minReviews, minSchools
+                hotwaterheating, airconditioning, prefarea, minReviews, minSchools, textToSearch
         );
 
         List<Apartment> apartments = apartmentRepository.findAll(spec);

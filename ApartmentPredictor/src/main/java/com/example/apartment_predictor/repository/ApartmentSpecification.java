@@ -29,7 +29,8 @@ public class ApartmentSpecification {
             Boolean airconditioning,
             Boolean prefarea,            // preferred area yes/no
             Integer minReviews,
-            Integer minSchools
+            Integer minSchools,
+            String textToSearch
     ) {
         return (Root<Apartment> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 
@@ -97,6 +98,18 @@ public class ApartmentSpecification {
                 Join<Apartment, Review> reviewJoin = root.join("reviews", JoinType.LEFT);
                 query.groupBy(root.get("id")); // necesario para contar
                 query.having(cb.greaterThanOrEqualTo(cb.count(reviewJoin), minReviews.longValue()));
+            }
+
+
+            // ─────────────────────────────
+            // Filtro por texto en reviews
+            // ─────────────────────────────
+            if (textToSearch != null && !"".equals(textToSearch)) {
+                Join<Apartment, Review> reviewJoin = root.join("reviews", JoinType.LEFT);
+                p = cb.and(p, cb.like( cb.lower(reviewJoin.get("content")),"%" + textToSearch.trim().toLowerCase() + "%" )
+            );
+                query.distinct(true); // evita duplicados por el JOIN
+                System.out.println(query);
             }
 
 
