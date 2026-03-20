@@ -26,7 +26,7 @@ import com.example.apartment_predictor.service.ApartmentService;
 import com.example.apartment_predictor.utils.PopulateDB;
 
 @RestController
-@RequestMapping("/api/v1/apartment")
+@RequestMapping("api/v1/apartment")
 @CrossOrigin(origins = "http://localhost:5173/")
 public class ApartmentRestController {
 
