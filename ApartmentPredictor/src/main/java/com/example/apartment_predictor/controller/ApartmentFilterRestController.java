@@ -31,7 +31,12 @@ public class ApartmentFilterRestController {
             @RequestParam(required = false) Boolean basement,
             @RequestParam(required = false) Boolean hotwaterheating,
             @RequestParam(required = false) Boolean airconditioning,
-            @RequestParam(required = false) Boolean prefarea
+            @RequestParam(required = false) Boolean prefarea,
+            @RequestParam(required = false) Integer minSchools,
+            @RequestParam(required = false) String textOnReview,
+            @RequestParam(required = false) String textOnReviewTitle
+
+
     ) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Status", "filterApartments executed");
@@ -39,10 +44,13 @@ public class ApartmentFilterRestController {
         headers.add("active", "true");
         headers.add("author", "Albert");
 
+
+        
         Specification<Apartment> spec = ApartmentSpecification.filterBy(
                 maxPrice, minArea, minBedrooms, minBathrooms, minParking,
                 furnishingStatus, mainroad, guestroom, basement,
-                hotwaterheating, airconditioning, prefarea
+                hotwaterheating, airconditioning, prefarea,
+                minSchools, textOnReview, textOnReviewTitle
         );
 
         List<Apartment> apartments = apartmentRepository.findAll(spec);

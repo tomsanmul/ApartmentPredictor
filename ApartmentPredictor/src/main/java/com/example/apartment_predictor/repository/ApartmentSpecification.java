@@ -1,6 +1,8 @@
 package com.example.apartment_predictor.repository;
 
 import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.model.School;
+import com.example.apartment_predictor.model.Review;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.*;
 
@@ -20,7 +22,10 @@ public class ApartmentSpecification {
             Boolean basement,
             Boolean hotwaterheating,
             Boolean airconditioning,
-            Boolean prefarea            // preferred area yes/no
+            Boolean prefarea,           // preferred area yes/no
+            Integer minSchools,         // minimum number of schools
+            String textOnReview,        // text to search in review title or content
+            String textOnReviewTitle    // text to search in review title
     ) {
         return (Root<Apartment> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 
@@ -79,6 +84,47 @@ public class ApartmentSpecification {
             p = addYesNoFilter(p, cb, root, "hotwaterheating", hotwaterheating);
             p = addYesNoFilter(p, cb, root, "airconditioning", airconditioning);
             p = addYesNoFilter(p, cb, root, "prefarea", prefarea);
+
+            // ─────────────────────────────────────────────
+            // Schools filter - minimum number of schools
+            // ─────────────────────────────────────────────
+            if (minSchools != null && minSchools > 0) {
+                // Join the 'school' entity to the 'apartment' entity
+                Join<Apartment, School> schoolJoin = root.join("schools", JoinType.LEFT);
+                // Join<Apartment, School> schoolJoin = root.join("schools", JoinType.INNER);
+                // Group by apartment and count schools
+                query.groupBy(root.get("id"));
+                query.having(cb.ge(cb.count(schoolJoin), minSchools));
+            }
+
+            // ─────────────────────────────────────────────
+            // Review text filter - search in title
+            // ─────────────────────────────────────────────
+            if (isNotBlank(textOnReviewTitle)) {
+                // Join the 'review' entity to the 'apartment' entity
+                Join<Apartment, Review> reviewJoin = root.join("reviews", JoinType.INNER);
+                String searchText = "%" + textOnReviewTitle.trim().toLowerCase() + "%";
+
+                // Search only in title field
+                p = cb.and(p, cb.like(cb.lower(reviewJoin.get("title")), searchText));
+            }
+
+            // ─────────────────────────────────────────────
+            // Review text filter - search in title or content
+            // ─────────────────────────────────────────────
+            if (isNotBlank(textOnReview)) {
+                // Join the 'review' entity to the 'apartment' entity
+                Join<Apartment, Review> reviewJoin = root.join("reviews", JoinType.INNER);
+                String searchText = "%" + textOnReview.trim().toLowerCase() + "%";
+
+                // Search in both title and content fields
+                Predicate titleMatch = cb.like(cb.lower(reviewJoin.get("title")), searchText);
+                Predicate contentMatch = cb.like(cb.lower(reviewJoin.get("content")), searchText);
+                Predicate reviewTextMatch = cb.or(titleMatch, contentMatch);
+
+                p = cb.and(p, reviewTextMatch);
+            }
+
 
             return p;
         };
