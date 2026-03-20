@@ -39,11 +39,9 @@ public class ApartmentRestController {
     @Autowired
     SchoolRepository schoolRepository;
 
-
-
     @GetMapping("/getAll")
-    
     public ResponseEntity<Iterable<Apartment>> getAllApartments(){
+
        HttpHeaders headers = new HttpHeaders();
         headers.add("Status", "getAllApartments executed");
         headers.add("version", "1.0 Api Rest Apartment Object");
@@ -51,7 +49,6 @@ public class ApartmentRestController {
         headers.add("author", "Albert");
 
         return ResponseEntity.ok().headers(headers).body(apartmentService.findAll());
-        
         //return apartmentService.findAll();
     }
 
