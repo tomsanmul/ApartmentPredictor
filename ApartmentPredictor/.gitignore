@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### BASE DE DATOS ###
+apartmentpredictor.mv.db
