@@ -33,6 +33,14 @@ public class ApartmentQueriesRestController {
     // 2.1 Find apartments by number of bathrooms and PriceBetween Asc
     @GetMapping("/bedrooms-and-price-between-asc")
     public List<Apartment> findByBedroomsAndPriceBetween(@RequestParam Integer bedrooms, @RequestParam Long minPrice, @RequestParam Long maxPrice) {
-        return apartmentRepository.findByBedroomsAndPriceBetween(bedrooms, minPrice, maxPrice);
+        return apartmentRepository.findByBedroomsAndPriceBetween(bedrooms, minPrice, maxPrice);                            
     }
+
+    // 2.2 Find apartments that have air conditioning and at least 2 parking spots.
+
+    @GetMapping("/have-Airconditioning-and-two-parkings")
+    public List<Apartment> findByNumberApartmentsWhithAirconditioningAndTwoParkings() {
+        return apartmentRepository.findByNumberApartmentsWhithAirconditioningAndTwoParkings();
+    }
+    
 }

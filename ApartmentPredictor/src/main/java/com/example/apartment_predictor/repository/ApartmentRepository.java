@@ -43,4 +43,7 @@ public interface ApartmentRepository extends CrudRepository<Apartment, String>, 
     // 10. Find apartments by main road access and guest room availability
     List<Apartment> findByMainroadAndGuestroom(String mainroad, String guestroom);
 
+    // 11. Find the number apartments that have air conditioning and at least 2 parking spots
+    List<Apartment> findByNumberApartmentsWhithAirconditioningAndTwoParkings ();
+
 }
