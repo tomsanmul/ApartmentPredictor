@@ -32,8 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 
-### DB ###
-apartmentpredictordb.mv.db
-apartmentpredictordb.mv
-apartmentpredictordb
+# Database
+/db/
+*.mv.db
+*.trace.db
 
