@@ -47,6 +47,9 @@ public interface ApartmentRepository extends CrudRepository<Apartment, String>, 
     long countByAirconditioningAndParkingGreaterThanEqual(String airconditioning, Integer parking);
 
     // 12. Find apartments by price range and have Basement
-    List<Apartment> findByPriceBetweenAndBasement(Long minPrice, Long maxPrice, String basement);
+    boolean existsByPriceBetweenAndBasement(Long minPrice, Long maxPrice, String basement);
+
+     // 13. finds the top 10 apartments ordered by averageRating descending, but only those with basement
+    List<Apartment> findTop10ByBasementAndReviewCountGreaterThanEqualOrderByAverageRatingDesc(Integer reviewCount);
 
 }
