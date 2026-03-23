@@ -3,6 +3,11 @@ package com.example.apartment_predictor.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +21,19 @@ public class School {
     private String name;
     private String type;
     private String location;
+    
+    @Column(name = "latitude")
+    @NotNull(message = "Latitude is required")
+    @Min(value = -90, message = "Latitude must be between -90 and 90")
+    @Max(value = 90, message = "Latitude must be between -90 and 90")
+    private Double latitude;
+    
+    @Column(name = "longitude")
+    @NotNull(message = "Longitude is required")
+    @Min(value = -180, message = "Longitude must be between -180 and 180")
+    @Max(value = 180, message = "Longitude must be between -180 and 180")
+    private Double longitude;
+    
     private int rating;
     private boolean isPublic;
 
@@ -24,11 +42,13 @@ public class School {
         this.id = UUID.randomUUID().toString();
     }
 
-    public School(String name, String type, String location, int rating, boolean isPublic) {
+    public School(String name, String type, String location, Double latitude, Double longitude, int rating, boolean isPublic) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.type = type;
         this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.rating = rating;
         this.isPublic = isPublic;
     }
@@ -69,6 +89,22 @@ public class School {
         this.location = location;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
     public int getRating() {
         return rating;
     }
@@ -87,7 +123,8 @@ public class School {
 
     @Override
     public String toString() {
-        return "School [id=" + id + ", name=" + name + ", type=" + type + ", location=" + location + ", rating=" + rating + ", isPublic=" + isPublic + "]";
+        return "School [id=" + id + ", name=" + name + ", type=" + type + ", location=" + location + 
+               ", latitude=" + latitude + ", longitude=" + longitude + ", rating=" + rating + ", isPublic=" + isPublic + "]";
     }
 
 
