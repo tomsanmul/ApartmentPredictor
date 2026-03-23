@@ -34,3 +34,5 @@ build/
 
 ### BASE DE DATOS ###
 apartmentpredictor.mv.db
+apartmentpredictordb.mv
+apartmentpredictordb
