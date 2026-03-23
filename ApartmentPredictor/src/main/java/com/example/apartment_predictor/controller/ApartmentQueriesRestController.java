@@ -37,10 +37,10 @@ public class ApartmentQueriesRestController {
     }
 
     // 2.2 Find apartments that have air conditioning and at least 2 parking spots.
-
-    @GetMapping("/have-Airconditioning-and-two-parkings")
-    public List<Apartment> findByNumberApartmentsWhithAirconditioningAndTwoParkings() {
-        return apartmentRepository.findByNumberApartmentsWhithAirconditioningAndTwoParkings();
-    }
+    @GetMapping("/count-apartments")
+    public String countApartments() {
+        long count = apartmentRepository.countByAirconditioningAndParkingGreaterThanEqual("yes", 2);
+        return count + " apartamentos coinciden con tus criterios (con aire acondicionado y ≥2 plazas de aparcamiento).";
+}
     
 }
