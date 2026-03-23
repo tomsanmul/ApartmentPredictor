@@ -41,6 +41,13 @@ public class ApartmentQueriesRestController {
     public String countApartments() {
         long count = apartmentRepository.countByAirconditioningAndParkingGreaterThanEqual("yes", 2);
         return count + " apartamentos coinciden con tus criterios (con aire acondicionado y ≥2 plazas de aparcamiento).";
-}
+    }
+
+    // 2.2 Find apartments by price range
+   @GetMapping("/price-range-with-basement")
+    public List<Apartment> findByPriceRangeWithBasement(@RequestParam Long minPrice, @RequestParam Long maxPrice) {
+        return apartmentRepository.findByPriceBetweenAndBasement(minPrice, maxPrice, "yes");
+    }
+
     
 }

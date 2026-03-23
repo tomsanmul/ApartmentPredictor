@@ -46,4 +46,7 @@ public interface ApartmentRepository extends CrudRepository<Apartment, String>, 
     // 11. Find the number apartments that have air conditioning and at least 2 parking spots
     long countByAirconditioningAndParkingGreaterThanEqual(String airconditioning, Integer parking);
 
+    // 12. Find apartments by price range and have Basement
+    List<Apartment> findByPriceBetweenAndBasement(Long minPrice, Long maxPrice, String basement);
+
 }
