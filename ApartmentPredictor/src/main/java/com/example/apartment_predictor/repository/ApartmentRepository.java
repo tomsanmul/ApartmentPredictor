@@ -50,6 +50,6 @@ public interface ApartmentRepository extends CrudRepository<Apartment, String>, 
     boolean existsByPriceBetweenAndBasement(Long minPrice, Long maxPrice, String basement);
 
      // 13. finds the top 10 apartments ordered by averageRating descending, but only those with basement
-    List<Apartment> findTop10ByBasementAndReviewCountGreaterThanEqualOrderByAverageRatingDesc(Integer reviewCount);
+    //List<Apartment> findTop10ByBasementAndReviewCountGreaterThanEqualOrderByAverageRatingDesc(Integer reviewCount);
 
 }

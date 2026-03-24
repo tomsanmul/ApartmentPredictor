@@ -67,6 +67,7 @@ public class ApartmentQueriesRestController {
     //Write a derived query method that finds the top 10 apartments ordered by averageRating descending, but only those with balcony = true and reviewCount ≥ 5.
     //Use OrderByAverageRatingDesc + Top10 + conditions.
     //Display them in the UI as "Highly rated apartments with balcony (sorted best first)".
+    
     @GetMapping("/highly-rated-with-basement")
         public List<Apartment> getHighlyRatedWithBasement() {
             return null;
