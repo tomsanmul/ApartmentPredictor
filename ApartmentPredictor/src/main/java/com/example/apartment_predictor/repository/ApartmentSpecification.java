@@ -1,6 +1,7 @@
 package com.example.apartment_predictor.repository;
 
 import com.example.apartment_predictor.model.Apartment;
+import com.example.apartment_predictor.model.Reviewer;
 import com.example.apartment_predictor.model.School;
 import com.example.apartment_predictor.model.Review;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,7 +26,8 @@ public class ApartmentSpecification {
             Boolean prefarea,           // preferred area yes/no
             Integer minSchools,         // minimum number of schools
             String textOnReview,        // text to search in review title or content
-            String textOnReviewTitle    // text to search in review title
+            String textOnReviewTitle,    // text to search in review title
+            String reviewerId            // reviewer id
     ) {
         return (Root<Apartment> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 
@@ -124,6 +126,18 @@ public class ApartmentSpecification {
                 Predicate reviewTextMatch = cb.or(titleMatch, contentMatch);
 
                 p = cb.and(p, reviewTextMatch);
+            }
+
+            // ─────────────────────────────────────────────
+            // Reviewer ID filter - filter by specific reviewer
+            // ─────────────────────────────────────────────
+            if (isNotBlank(reviewerId)) {
+                // Join the 'review' entity to the 'apartment' entity
+                Join<Apartment, Review> reviewJoin = root.join("reviews", JoinType.INNER);
+                // Join the 'reviewer' entity to the 'review' entity
+                Join<Review, Reviewer> reviewerJoin = reviewJoin.join("reviewer", JoinType.INNER);
+                
+                p = cb.and(p, cb.equal(reviewerJoin.get("id"), reviewerId.trim()));
             }
 
 

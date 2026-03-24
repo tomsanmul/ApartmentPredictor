@@ -34,7 +34,8 @@ public class ApartmentFilterRestController {
             @RequestParam(required = false) Boolean prefarea,
             @RequestParam(required = false) Integer minSchools,
             @RequestParam(required = false) String textOnReview,
-            @RequestParam(required = false) String textOnReviewTitle
+            @RequestParam(required = false) String textOnReviewTitle,
+            @RequestParam(required = false) String reviewerId
 
 
     ) {
@@ -50,7 +51,7 @@ public class ApartmentFilterRestController {
                 maxPrice, minArea, minBedrooms, minBathrooms, minParking,
                 furnishingStatus, mainroad, guestroom, basement,
                 hotwaterheating, airconditioning, prefarea,
-                minSchools, textOnReview, textOnReviewTitle
+                minSchools, textOnReview, textOnReviewTitle, reviewerId
         );
 
         List<Apartment> apartments = apartmentRepository.findAll(spec);
