@@ -93,7 +93,7 @@ public class ApartmentRestController {
 
     @GetMapping("/page")
     public ResponseEntity<Page<Apartment>> getApartmentsPaginated(@RequestParam int pageNo) {
-        final int PAGE_SIZE = 5;
+        final int PAGE_SIZE = 8;
         HttpHeaders headers = new HttpHeaders();
         headers.add("Status", "getApartmentsPaginated executed");
         headers.add("version", "1.0 Api Rest Apartment Object");
