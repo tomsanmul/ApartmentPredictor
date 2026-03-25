@@ -1,18 +1,18 @@
 package com.example.apartment_predictor.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import com.example.apartment_predictor.model.Apartment;
 import com.example.apartment_predictor.repository.ApartmentRepository;
 
 @RestController
-@RequestMapping("/api/v1/apartment/queries")
+@RequestMapping("api/v1/apartment")
+@CrossOrigin(origins = "http://localhost:5173/")
 public class ApartmentQueriesRestController {
 
     @Autowired
