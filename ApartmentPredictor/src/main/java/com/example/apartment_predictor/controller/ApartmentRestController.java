@@ -92,21 +92,16 @@ public class ApartmentRestController {
     }
 
     @GetMapping("/page")
-    public ResponseEntity<Page<Apartment>> getApartmentsPaginated(@RequestParam int pageNo) {
-        final int PAGE_SIZE = 8;
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Status", "getApartmentsPaginated executed");
-        headers.add("version", "1.0 Api Rest Apartment Object");
-        headers.add("active", "true");
-        headers.add("author", "Albert");
-        headers.add("pageSize", String.valueOf(PAGE_SIZE));
-        headers.add("pageNo", String.valueOf(pageNo));
-
-
-        Page<Apartment> apartments = apartmentService.findPaginated(pageNo, PAGE_SIZE);
-        headers.add("totalObjects", String.valueOf(apartments.getTotalElements()));
-
-        return ResponseEntity.ok().headers(headers).body(apartments);
+    public ResponseEntity<Page<Apartment>> getApartmentsPaginated(
+        @RequestParam int pageNo, 
+        @RequestParam(defaultValue = "20") int pageSize) 
+        {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("pageSize", String.valueOf(pageSize));
+            headers.add("pageNo", String.valueOf(pageNo));
+            Page<Apartment> apartments = apartmentService.findPaginated(pageNo, pageSize);
+            headers.add("totalObjects", String.valueOf(apartments.getTotalElements()));
+            return ResponseEntity.ok().headers(headers).body(apartments);
     }
 
     @PutMapping("/assignSchoolsToApartment")
