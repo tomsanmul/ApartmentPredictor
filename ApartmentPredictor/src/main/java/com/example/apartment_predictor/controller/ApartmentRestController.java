@@ -94,7 +94,7 @@ public class ApartmentRestController {
     @GetMapping("/page")
     public ResponseEntity<Page<Apartment>> getApartmentsPaginated(
         @RequestParam int pageNo, 
-        @RequestParam(defaultValue = "40") int pageSize) 
+        @RequestParam(defaultValue = "30") int pageSize) 
         {
             HttpHeaders headers = new HttpHeaders();
             headers.add("pageSize", String.valueOf(pageSize));
