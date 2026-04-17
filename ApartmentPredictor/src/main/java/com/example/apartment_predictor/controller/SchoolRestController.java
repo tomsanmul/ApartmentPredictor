@@ -68,4 +68,16 @@ public class SchoolRestController {
         else
             return ResponseEntity.badRequest().headers(headers).body("Failed to populate schools");
     }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllSchools() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Status", "deleteAllSchools executed");
+        headers.add("version", "1.0 Api Rest School Object");
+        headers.add("active", "true");
+        headers.add("author", "Albert");
+        
+        schoolRepository.deleteAll();
+        return ResponseEntity.ok().headers(headers).body("All schools deleted");
+    }
 }
