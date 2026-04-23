@@ -55,7 +55,7 @@ public class PopulateDB {
         System.out.println("\n" +
                 "\nPopulateDB: " +
                 "\n---------------------------------------------" +
-                 "\nPopulated db: " + totalQty + " entities." +
+                "\nPopulated db: " + totalQty + " entities." +
                 "\nApartments: " + plainApartments.size() + " entities." +
                 "\nSchools: " + schools.size() + " entities." +
                 "\nReviewers: " + reviewers.size() + " entities." +
