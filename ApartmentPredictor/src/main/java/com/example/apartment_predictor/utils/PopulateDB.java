@@ -123,6 +123,10 @@ public class PopulateDB {
 
             String name = namePrefixes[rnd.nextInt(namePrefixes.length)] + " " + nameSuffixes[rnd.nextInt(nameSuffixes.length)];
 
+             // Generate random Manhattan coordinates
+            double latitude = 40.70 + rnd.nextDouble() * 0.10; // Manhattan: 40.70 to 40.80
+            double longitude = -74.02 - rnd.nextDouble() * 0.06; // Manhattan: -74.08 to -74.02
+            
             School school = new School(name, type, location, latitude, longitude, rating, isPublic);
             schoolRepository.save(school);
 
