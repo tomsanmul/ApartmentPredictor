@@ -123,7 +123,7 @@ public class PopulateDB {
 
             String name = namePrefixes[rnd.nextInt(namePrefixes.length)] + " " + nameSuffixes[rnd.nextInt(nameSuffixes.length)];
 
-            School school = new School(name, type, location, rating, isPublic);
+            School school = new School(name, type, location, latitude, longitude, rating, isPublic);
             schoolRepository.save(school);
 
             School schoolById = schoolRepository.findById(school.getId()).orElse(null);
