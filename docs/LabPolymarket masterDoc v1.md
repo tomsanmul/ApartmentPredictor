@@ -137,7 +137,6 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
      └──────────────────┘
 
 
-
 2. C4 – Level 3: Backend Component Diagram (Backend Component Diagram.png)
 
 ┌──────────────────────────────────────────────────────────┐
