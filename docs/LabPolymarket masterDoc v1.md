@@ -1,4 +1,4 @@
-# Project ARCHITECTURE: Polymarket Real-Time Dashboard
+# Polymarket Architecture:  Real-Time Dashboard
 
 1. Overview
 
