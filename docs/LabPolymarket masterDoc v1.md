@@ -102,3 +102,36 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
 
 2. C4 – Level 2: Container Diagram (container.png)
 
+┌──────────────────────────────────────────────┐
+│                  User                        │
+└──────────────────────┬──────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│        Frontend (React + Apollo Client)      │
+│----------------------------------------------│
+│ - Dashboard UI                               │
+│ - Market Detail View                         │
+│ - Favorites                                  │
+│ - Apollo Client (HTTP + WebSocket)           │
+└──────────────────────┬──────────────────────┘
+                       │ GraphQL
+                       ▼
+┌──────────────────────────────────────────────┐
+│         Backend (Spring Boot)                │
+│----------------------------------------------│
+│ - GraphQL API                                │
+│ - Security (JWT)                             │
+│ - Business Logic                             │
+│ - Reactive System (Flux / Sinks)             │
+│ - Polling Service                            │
+└───────────────┬───────────────┬─────────────┘
+                │               │
+                ▼               ▼
+     ┌──────────────────┐   ┌──────────────────────┐
+     │   Database       │   │ Polymarket API       │
+     │------------------│   │ (External REST API)  │
+     │ - Users          │   └──────────────────────┘
+     │ - Favorites      │
+     │ - Predictions    │
+     └──────────────────┘
