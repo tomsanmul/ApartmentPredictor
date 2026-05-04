@@ -99,4 +99,52 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
 
 
 
+1. C4 – Level 1: System Context Diagram
+
+                ┌──────────────────────┐
+                │        User          │
+                └─────────┬────────────┘
+                          │
+                          ▼
+              ┌──────────────────────────┐
+              │   React Frontend (SPA)   │
+              └─────────┬────────────────┘
+                        │ GraphQL (HTTP + WS)
+                        ▼
+              ┌──────────────────────────┐
+              │  Spring Boot Backend     │
+              │      (GraphQL API)       │
+              └─────────┬────────────────┘
+                        │ REST
+                        ▼
+        ┌────────────────────────────────────┐
+        │ Polymarket Gamma API (External)    │
+        └────────────────────────────────────┘
+
+
+
+1. C4 – Level 1: System Context Diagram
+
+                ┌──────────────────────┐
+                │        User          │
+                └─────────┬────────────┘
+                          │
+                          ▼
+              ┌──────────────────────────┐
+              │   React Frontend (SPA)   │
+              └─────────┬────────────────┘
+                        │ GraphQL (HTTP + WS)
+                        ▼
+              ┌──────────────────────────┐
+              │  Spring Boot Backend     │
+              │      (GraphQL API)       │
+              └─────────┬────────────────┘
+                        │ REST
+                        ▼
+        ┌────────────────────────────────────┐
+        │ Polymarket Gamma API (External)    │
+        └────────────────────────────────────┘
+
+
+
 
