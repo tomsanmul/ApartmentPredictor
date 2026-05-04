@@ -101,50 +101,39 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
 
 1. C4 – Level 1: System Context Diagram
 
-                ┌──────────────────────┐
-                │        User          │
-                └─────────┬────────────┘
-                          │
-                          ▼
-              ┌──────────────────────────┐
-              │   React Frontend (SPA)   │
-              └─────────┬────────────────┘
-                        │ GraphQL (HTTP + WS)
+    ┌──────────────────────────────────────────────┐
+    │                  User                        │
+    └──────────────────────┬───────────────────────┘
+                        │
                         ▼
-              ┌──────────────────────────┐
-              │  Spring Boot Backend     │
-              │      (GraphQL API)       │
-              └─────────┬────────────────┘
-                        │ REST
+    ┌──────────────────────────────────────────────┐
+    │        Frontend (React + Apollo Client)      │
+    │----------------------------------------------│
+    │ - Dashboard UI                               │
+    │ - Market Detail View                         │
+    │ - Favorites                                  │
+    │ - Apollo Client (HTTP + WebSocket)           │
+    └──────────────────────┬───────────────────────┘
+                        │ GraphQL
                         ▼
-        ┌────────────────────────────────────┐
-        │ Polymarket Gamma API (External)    │
-        └────────────────────────────────────┘
-
-
-
-1. C4 – Level 1: System Context Diagram
-
-                ┌──────────────────────┐
-                │        User          │
-                └─────────┬────────────┘
-                          │
-                          ▼
-              ┌──────────────────────────┐
-              │   React Frontend (SPA)   │
-              └─────────┬────────────────┘
-                        │ GraphQL (HTTP + WS)
-                        ▼
-              ┌──────────────────────────┐
-              │  Spring Boot Backend     │
-              │      (GraphQL API)       │
-              └─────────┬────────────────┘
-                        │ REST
-                        ▼
-        ┌────────────────────────────────────┐
-        │ Polymarket Gamma API (External)    │
-        └────────────────────────────────────┘
-
+    ┌──────────────────────────────────────────────┐
+    │         Backend (Spring Boot)                │
+    │----------------------------------------------│
+    │ - GraphQL API                                │
+    │ - Security (JWT)                             │
+    │ - Business Logic                             │
+    │ - Reactive System (Flux / Sinks)             │
+    │ - Polling Service                            │
+    └───────────────┬───────────────┬──────────────┘
+                    │               │
+                    ▼               ▼
+        ┌──────────────────┐   ┌──────────────────────┐
+        │   Database       │   │ Polymarket API       │
+        │------------------│   │ (External REST API)  │
+        │ - Users          │   └──────────────────────┘
+        │ - Favorites      │
+        │ - Predictions    │
+        └──────────────────┘
 
 
 
