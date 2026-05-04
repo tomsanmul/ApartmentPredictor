@@ -99,7 +99,7 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
 
 
 
-        2. C4 – Level 2: Container Diagram
+2. C4 – Level 2: Container Diagram
 
         ┌──────────────────────────────────────────────┐
         │                  User                        │
