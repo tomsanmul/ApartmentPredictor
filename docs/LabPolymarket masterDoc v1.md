@@ -75,6 +75,7 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
 # DIAGRAMS Type C4
 
 1. C4 – Level 1: System Context Diagram
+
                 ┌──────────────────────┐
                 │        User          │
                 └─────────┬────────────┘
@@ -94,3 +95,8 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
         ┌────────────────────────────────────┐
         │ Polymarket Gamma API (External)    │
         └────────────────────────────────────┘
+
+
+
+
+
