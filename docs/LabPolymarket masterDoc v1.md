@@ -68,8 +68,9 @@ Event Stream (Sinks/Flux): Broadcasts updates to subscribers
 
 When a change is detected, a MarketUpdate event is generated and pushed to subscribed clients via GraphQL Subscriptions.
 
----------------------------------------------------------------------------------------------------------------------------------------
 
+
+---------------------------------------------------------------------------------------------------------------------------------------
 
 
 # DIAGRAMS Type C4
@@ -169,7 +170,7 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
         │ WebClient (REST API)     │   │ UserRepository           │
         │                          │   │ FavoriteRepository       │
         └──────────────┬───────────┘   │ PredictionRepository     │
-                        │               └──────────────────────────┘
+                        │               └─────────────────────────┘
                         ▼
         ┌──────────────────────────────────────────────────┐
         │        Polling & Event System                    │
