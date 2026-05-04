@@ -74,9 +74,7 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
 
 # DIAGRAMS Type C4
 
-
-1. C4 – Level 1: System Context Diagram (System Context.png)
-
+1. C4 – Level 1: System Context Diagram
                 ┌──────────────────────┐
                 │        User          │
                 └─────────┬────────────┘
@@ -96,12 +94,7 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
         ┌────────────────────────────────────┐
         │ Polymarket Gamma API (External)    │
         └────────────────────────────────────┘
-
-
-
-
-2. C4 – Level 2: Container Diagram (container.png)
-
+🧱 2. C4 – Level 2: Container Diagram
 ┌──────────────────────────────────────────────┐
 │                  User                        │
 └──────────────────────┬──────────────────────┘
@@ -135,3 +128,46 @@ When a change is detected, a MarketUpdate event is generated and pushed to subsc
      │ - Favorites      │
      │ - Predictions    │
      └──────────────────┘
+⚙️ 3. C4 – Level 3: Backend Component Diagram
+┌──────────────────────────────────────────────────────────┐
+│             Spring Boot Backend                          │
+└──────────────────────────────────────────────────────────┘
+
+   ┌──────────────────────────────────────────────────┐
+   │                GraphQL Layer                     │
+   │--------------------------------------------------│
+   │ Query Resolver                                   │
+   │ Mutation Resolver                                │
+   │ Subscription Resolver                            │
+   └──────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+   ┌──────────────────────────────────────────────────┐
+   │                Service Layer                     │
+   │--------------------------------------------------│
+   │ MarketService                                    │
+   │ UserService                                      │
+   │ PredictionService                                │
+   └───────────────┬──────────────────────┬───────────┘
+                   │                      │
+                   ▼                      ▼
+
+   ┌──────────────────────────┐   ┌──────────────────────────┐
+   │ PolymarketClient        │   │ Persistence Layer        │
+   │--------------------------│   │--------------------------│
+   │ WebClient (REST API)     │   │ UserRepository           │
+   │                          │   │ FavoriteRepository       │
+   └──────────────┬───────────┘   │ PredictionRepository     │
+                  │               └──────────────────────────┘
+                  ▼
+   ┌──────────────────────────────────────────────────┐
+   │        Polling & Event System                    │
+   │--------------------------------------------------│
+   │ MarketPollingService (Scheduled Task)            │
+   │ In-memory Cache (Map<MarketId, Market>)          │
+   │ Change Detection                                │
+   │ Event Stream (Sinks.Many<MarketUpdate>)          │
+   └──────────────────────┬───────────────────────────┘
+                          │
+                          ▼
+                GraphQL Subscription Stream
